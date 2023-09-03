@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "biome_replacer",
+  "version": "${version}",
+  "name": "Biome replacer",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/WerDei/Biome replacer"
+  },
+  "license": "MIT",
+  "icon": "assets/biome_replacer/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.werdei.biome_replacer.BiomeReplacer"
+    ]
+  },
+  "mixins": [
+    "biome_replacer.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "*"
+  }
+}
