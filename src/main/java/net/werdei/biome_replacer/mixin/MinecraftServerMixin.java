@@ -10,7 +10,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin
 {
-    @Inject(method = "<init>", at = @At("RETURN"))
+    //TODO Find a more appropriate injection point, maybe?
+    @Inject(method = "<init>", at = @At(
+            value = "INVOKE_ASSIGN",
+            target = "Lnet/minecraft/server/WorldStem;worldData()Lnet/minecraft/world/level/storage/WorldData;"))
     private void onServerStart(CallbackInfo ci)
     {
         BiomeReplacer.prepareReplacementRules((MinecraftServer)(Object)this);

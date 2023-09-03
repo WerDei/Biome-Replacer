@@ -32,4 +32,4 @@ Spiders are yucky. Let's remove Terralith's Infested caves:
 ```
 terralith:cave/infested_caves > minecraft:dripstone_caves
 ```
-![Infested Caves are replaced by Dropstone Caves](https://raw.githubusercontent.com/WerDei/Biome-Replacer/master/readme-files/example-3.png)
+![Infested Caves are replaced by Dropstone Caves](https://raw.githubusercontent.com/WerDei/Biome-Replacer/master/readme-files/example-4.png)

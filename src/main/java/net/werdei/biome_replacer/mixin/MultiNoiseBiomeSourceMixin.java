@@ -37,6 +37,7 @@ public abstract class MultiNoiseBiomeSourceMixin extends BiomeSource
         if (BiomeReplacer.noReplacements())
         {
             modifiedParameters = parameterList;
+            BiomeReplacer.log("No rules found, not replacing anything");
             return;
         }
 
@@ -49,5 +50,6 @@ public abstract class MultiNoiseBiomeSourceMixin extends BiomeSource
             ));
 
         modifiedParameters = new Climate.ParameterList<>(newParameterList);
+        BiomeReplacer.log("Biomes replaced successfully");
     }
 }
