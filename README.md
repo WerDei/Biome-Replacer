@@ -1,9 +1,16 @@
+<!-- modrinth_exclude.start -->
+# Biome Replacer
+Download: 
+[Modrinth](https://modrinth.com/mod/biome-replacer) | 
+[Curseforge](https://www.curseforge.com/minecraft/mc-mods/biome-replacer)
+<!-- modrinth_exclude.end -->
+
 Small mod that replaces one biome with another, without affecting other parts of the generation. 
 Useful for preventing certain datapack biomes from generating, fixing modded biomes 
 not appearing, or polishing up that almost-perfect seed.
 
 Configuration is very simple. 
-Find `biome-replacer.properties` in your configuration folder, and put your rules in the format
+Find `biome-replacer.properties` in your configuration folder, and put replacement rules in the format
 `old_biome > new_biome`. You can find some examples below.
 
 Works fully server-side.
