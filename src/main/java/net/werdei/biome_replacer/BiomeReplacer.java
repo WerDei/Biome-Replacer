@@ -2,10 +2,11 @@ package net.werdei.biome_replacer;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Holder;
+import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.RegistryLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.werdei.biome_replacer.config.Config;
 import org.apache.logging.log4j.LogManager;
@@ -27,10 +28,10 @@ public class BiomeReplacer implements ModInitializer
         Config.createIfAbsent();
     }
 
-    public static void prepareReplacementRules(MinecraftServer server)
+    public static void prepareReplacementRules(LayeredRegistryAccess<RegistryLayer> registryAccess)
     {
         rules = new HashMap<>();
-        var registry = server.registryAccess().registryOrThrow(Registries.BIOME);
+        var registry = registryAccess.compositeAccess().registryOrThrow(Registries.BIOME);
 
         Config.reload();
         for (var rule : Config.rules.entrySet())
