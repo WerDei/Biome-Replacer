@@ -2,14 +2,20 @@
   "schemaVersion": 1,
   "id": "biome_replacer",
   "version": "${version}",
-  "name": "Biome replacer",
-  "description": "",
-  "authors": [],
+  "name": "Biome Replacer",
+  "description": "Small mod that replaces one biome with another, without affecting other parts of the generation.",
+  "authors": [
+    {
+      "name": "WerDei"
+    }
+  ],
   "contact": {
-    "repo": "https://github.com/WerDei/Biome replacer"
+    "issues": "https://github.com/WerDei/Biome-Replacer/issues",
+    "sources": "https://github.com/WerDei/Biome-Replacer",
+    "homepage": "https://modrinth.com/mod/biome-replacer"
   },
   "license": "MIT",
-  "icon": "assets/biome_replacer/icon.png",
+  "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [

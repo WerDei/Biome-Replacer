@@ -1,1 +1,1 @@
-- Quick fix to get it working on Quilt correctly
+- Added description, links, icon
