@@ -20,7 +20,7 @@ public class BiomeReplacer implements ModInitializer
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String LOG_PREFIX = "[BiomeReplacer] ";
 
-    private static Map<ResourceLocation, Holder<Biome>> rules;
+    private static Map<Holder<Biome>, Holder<Biome>> rules;
 
     @Override
     public void onInitialize()
@@ -36,7 +36,7 @@ public class BiomeReplacer implements ModInitializer
         Config.reload();
         for (var rule : Config.rules.entrySet())
         {
-            var oldBiome = getBiomeResourceLocation(rule.getKey(), registry);
+            var oldBiome = getBiomeHolder(rule.getKey(), registry);
             var newBiome = getBiomeHolder(rule.getValue(), registry);
             if (oldBiome != null && newBiome != null)
                 rules.put(oldBiome, newBiome);
@@ -65,12 +65,10 @@ public class BiomeReplacer implements ModInitializer
         return null;
     }
 
-    public static Holder<Biome> replaceIfNeeded(Holder<Biome> biomeHolder)
+    public static Holder<Biome> replaceIfNeeded(Holder<Biome> original)
     {
-        for (var entry : rules.entrySet())
-            if (biomeHolder.is(entry.getKey()))
-                return entry.getValue();
-        return biomeHolder;
+        var replacement = rules.get(original);
+        return replacement == null ? original : replacement;
     }
 
     public static boolean noReplacements()
