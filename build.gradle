@@ -1,7 +1,9 @@
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
 plugins {
     id 'fabric-loom' version '1.2-SNAPSHOT'
     id "com.modrinth.minotaur" version "2.7.4"
-    id "net.darkhax.curseforgegradle" version "1.0.11"
+    id "net.darkhax.curseforgegradle" version "1.1.16"
 }
 
 version = project.mod_version
@@ -98,22 +100,21 @@ modrinth
 }
 tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 
-//task curseforge(type: TaskPublishCurseForge)
-//{
-//    group 'upload'
-//    apiToken = project.curseforge_token // saved in user home
-//
-//    disableVersionDetection()
-//    def mainFile = upload(curseforge_mod_id, remapJar)
-//    mainFile.changelog = changelogText
-//    mainFile.changelogType = 'markdown'
-//    mainFile.releaseType = project.mod_version_type
-//    mainFile.displayName = versionDisplayName
-//    mainFile.addModLoader('Fabric')
-//    mainFile.addModLoader('Quilt')
-//    for (ver in supportedMinecraftVersions)
-//    {
-//        mainFile.addGameVersion(ver)
-//    }
-//    mainFile.addRelation('fabric-api', 'requiredDependency')
-//}
+tasks.register('curseforge', TaskPublishCurseForge)
+{
+    group 'publishing'
+    apiToken = project.curseforge_token
+
+    disableVersionDetection()
+    def mainFile = upload(curseforge_mod_id, remapJar)
+    mainFile.changelog = changelogText
+    mainFile.changelogType = 'markdown'
+    mainFile.releaseType = project.mod_version_type
+    mainFile.displayName = versionDisplayName
+    mainFile.addModLoader('Fabric')
+    mainFile.addModLoader('Quilt')
+    for (ver in supportedMinecraftVersions)
+    {
+        mainFile.addGameVersion(ver)
+    }
+}
