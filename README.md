@@ -15,7 +15,11 @@ Find `biome-replacer.properties` in your configuration folder, and put replaceme
 
 Works fully server-side.
 
-Mod compatibility is mostly untested, for now. Please open an issue if you find any errors.
+Note that this mod is intended mostly for replacing vanilla and datapack biomes.
+**Biomes added using libraries like TerraBlender or Biolith cannot be replaced**; 
+you should use the mod's config to tweak or remove them instead.  
+That said, this mod can safely be used alongside these libraries, 
+and it's even possible to replace vanilla/datapack biomes *with* modded ones.
 
 ## Examples
 
