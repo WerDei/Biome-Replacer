@@ -1,55 +1,62 @@
 package net.werdei.biome_replacer.mixin;
 
-import com.mojang.datafixers.util.Pair;
+import com.google.common.collect.ImmutableSet;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 import net.werdei.biome_replacer.BiomeReplacer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Mixin(MultiNoiseBiomeSource.class)
-public abstract class MultiNoiseBiomeSourceMixin extends BiomeSource
+@Mixin(value = MultiNoiseBiomeSource.class, priority = 2000)
+public abstract class MultiNoiseBiomeSourceMixin
 {
     @Unique
-    private Climate.ParameterList<Holder<Biome>> modifiedParameters = null;
+    private boolean hasInitialised;
 
-
-    @Inject(method = "parameters", at = @At("RETURN"), cancellable = true)
-    private void parameters(CallbackInfoReturnable<Climate.ParameterList<Holder<Biome>>> cir)
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void parameters(Either either, CallbackInfo ci)
     {
-        if (modifiedParameters == null)
-            findAndReplace(cir.getReturnValue());
-        cir.setReturnValue(modifiedParameters);
+        //TODO Why is it called 11 times??
+        BiomeReplacer.addOnServerStartCallback(this::findAndReplace);
     }
 
     @Unique
-    private void findAndReplace(Climate.ParameterList<Holder<Biome>> parameterList)
+    private void findAndReplace()
     {
+        if (hasInitialised)
+        {
+            BiomeReplacer.logWarn("Already initialised!");
+            return;
+        }
         if (BiomeReplacer.noReplacements())
         {
-            modifiedParameters = parameterList;
             BiomeReplacer.log("No rules found, not replacing anything");
             return;
         }
 
-        List<Pair<Climate.ParameterPoint, Holder<Biome>>> newParameterList = new ArrayList<>();
+        var biomeSource = (BiomeSourceAccessor) this;
 
-        for (var value : parameterList.values())
-            newParameterList.add(new Pair<>(
-                    value.getFirst(),
-                    BiomeReplacer.replaceIfNeeded(value.getSecond())
-            ));
+        var possibleBiomes = biomeSource.getPossibleBiomes().get();
+        var newPossibleBiomes = possibleBiomes.stream()
+                .map(BiomeReplacer::replaceIfNeeded)
+                .collect(ImmutableSet.toImmutableSet());
 
-        modifiedParameters = new Climate.ParameterList<>(newParameterList);
+        biomeSource.setPossibleBiomes(() -> newPossibleBiomes);
+        hasInitialised = true;
         BiomeReplacer.log("Biomes replaced successfully");
+    }
+
+    // TODO Does not inject into the TerraBlender's return value :c
+    @ModifyReturnValue(method = "getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;",
+            at = @At("RETURN"))
+    private Holder<Biome> replaceBiome(Holder<Biome> original)
+    {
+        return BiomeReplacer.replaceIfNeeded(original);
     }
 }

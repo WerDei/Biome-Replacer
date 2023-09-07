@@ -22,11 +22,13 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.2.0-rc.2")))
 
     modImplementation "maven.modrinth:modmenu:7.2.1"
     modImplementation "maven.modrinth:lazydfu:0.1.3"
+    modImplementation "maven.modrinth:dcwa:4.1"
 
-    modImplementation "maven.modrinth:terralith:2.4.5"
+    //modImplementation "maven.modrinth:terralith:2.4.5"
 }
 
 processResources {

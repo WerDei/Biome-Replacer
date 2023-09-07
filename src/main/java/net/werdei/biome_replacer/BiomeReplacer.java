@@ -12,6 +12,7 @@ import net.werdei.biome_replacer.config.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ public class BiomeReplacer implements ModInitializer
     private static final String LOG_PREFIX = "[BiomeReplacer] ";
 
     private static Map<Holder<Biome>, Holder<Biome>> rules;
+    private static final ArrayList<Runnable> onServerStartCallbacks = new ArrayList<>();
 
     @Override
     public void onInitialize()
@@ -28,7 +30,21 @@ public class BiomeReplacer implements ModInitializer
         Config.createIfAbsent();
     }
 
-    public static void prepareReplacementRules(LayeredRegistryAccess<RegistryLayer> registryAccess)
+
+    public static void addOnServerStartCallback(Runnable callback)
+    {
+        onServerStartCallbacks.add(callback);
+    }
+
+    public static void onServerStart(LayeredRegistryAccess<RegistryLayer> registryAccess)
+    {
+        prepareReplacementRules(registryAccess);
+        onServerStartCallbacks.forEach(Runnable::run);
+        onServerStartCallbacks.clear();
+        log("Setup complete");
+    }
+
+    private static void prepareReplacementRules(LayeredRegistryAccess<RegistryLayer> registryAccess)
     {
         rules = new HashMap<>();
         var registry = registryAccess.compositeAccess().registryOrThrow(Registries.BIOME);
@@ -45,16 +61,6 @@ public class BiomeReplacer implements ModInitializer
         log("Loaded " + rules.size() + " biome replacement rules");
     }
 
-    private static ResourceLocation getBiomeResourceLocation(String id, Registry<Biome> registry)
-    {
-        var rr = new ResourceLocation(id);
-        if (registry.get(new ResourceLocation(id)) != null)
-            return rr;
-
-        logWarn("Biome " + id + " not found. The rule will be ignored.");
-        return null;
-    }
-
     private static Holder<Biome> getBiomeHolder(String id, Registry<Biome> registry)
     {
         var resourceKey = registry.getResourceKey(registry.get(new ResourceLocation(id)));
@@ -64,6 +70,7 @@ public class BiomeReplacer implements ModInitializer
         logWarn("Biome " + id + " not found. The rule will be ignored.");
         return null;
     }
+
 
     public static Holder<Biome> replaceIfNeeded(Holder<Biome> original)
     {

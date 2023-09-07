@@ -1,0 +1,3 @@
+accessWidener v2 named
+
+mutable field net/minecraft/world/level/biome/BiomeSource possibleBiomes Ljava/util/function/Supplier;

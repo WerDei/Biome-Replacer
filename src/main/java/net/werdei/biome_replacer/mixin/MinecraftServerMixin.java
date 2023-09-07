@@ -18,11 +18,9 @@ import java.net.Proxy;
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin
 {
-    @Inject(method = "<init>", at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/server/WorldStem;registries()Lnet/minecraft/core/LayeredRegistryAccess;"))
+    @Inject(method = "<init>", at = @At(value = "RETURN"))
     private void onServerStart(Thread thread, LevelStorageSource.LevelStorageAccess levelStorageAccess, PackRepository packRepository, WorldStem worldStem, Proxy proxy, DataFixer dataFixer, Services services, ChunkProgressListenerFactory chunkProgressListenerFactory, CallbackInfo ci)
     {
-        BiomeReplacer.prepareReplacementRules(worldStem.registries());
+        BiomeReplacer.onServerStart(worldStem.registries());
     }
 }

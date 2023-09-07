@@ -25,6 +25,7 @@
   "mixins": [
     "biome_replacer.mixins.json"
   ],
+  "accessWidener": "biome_replacer.accesswidener",
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
