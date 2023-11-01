@@ -1,6 +1,5 @@
 package net.werdei.biome_replacer;
 
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
@@ -8,6 +7,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.werdei.biome_replacer.config.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,17 +17,27 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BiomeReplacer implements ModInitializer
+@Mod(BiomeReplacer.MOD_ID)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
+public class BiomeReplacer
 {
+    public static final String MOD_ID = "biome_replacer";
+
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String LOG_PREFIX = "[BiomeReplacer] ";
 
     private static Map<Holder<Biome>, Holder<Biome>> rules;
 
-    @Override
-    public void onInitialize()
+
+    public BiomeReplacer()
     {
         Config.createIfAbsent();
+    }
+
+    @SubscribeEvent
+    public static void onServerAboutToStart(ServerAboutToStartEvent event)
+    {
+        BiomeReplacer.prepareReplacementRules(event.getServer().registries());
     }
 
     public static void prepareReplacementRules(LayeredRegistryAccess<RegistryLayer> registryAccess)

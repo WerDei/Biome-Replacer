@@ -1,6 +1,6 @@
 package net.werdei.biome_replacer.config;
 
-import net.fabricmc.loader.api.FabricLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class Config
 
     public static void createIfAbsent()
     {
-        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
+        File file = new File(FMLPaths.CONFIGDIR.get().toFile(), FILE_NAME);
         if (file.exists()) return;
 
         try
@@ -45,7 +45,7 @@ public class Config
     public static void reload()
     {
         createIfAbsent();
-        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
+        File file = new File(FMLPaths.CONFIGDIR.get().toFile(), FILE_NAME);
 
         try
         {

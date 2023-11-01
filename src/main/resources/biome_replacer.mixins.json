@@ -3,11 +3,9 @@
   "minVersion": "0.8",
   "package": "net.werdei.biome_replacer.mixin",
   "compatibilityLevel": "JAVA_17",
+  "refmap": "biome_replacer.refmap.json",
   "mixins": [
-    "MinecraftServerMixin",
     "MultiNoiseBiomeSourceMixin"
-  ],
-  "client": [
   ],
   "injectors": {
     "defaultRequire": 1
