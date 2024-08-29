@@ -1,1 +1,1 @@
-- Added description, links, icon
+- Added 1.21 + 1.21.1 suport

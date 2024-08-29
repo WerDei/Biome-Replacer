@@ -45,19 +45,9 @@ public class BiomeReplacer implements ModInitializer
         log("Loaded " + rules.size() + " biome replacement rules");
     }
 
-    private static ResourceLocation getBiomeResourceLocation(String id, Registry<Biome> registry)
-    {
-        var rr = new ResourceLocation(id);
-        if (registry.get(new ResourceLocation(id)) != null)
-            return rr;
-
-        logWarn("Biome " + id + " not found. The rule will be ignored.");
-        return null;
-    }
-
     private static Holder<Biome> getBiomeHolder(String id, Registry<Biome> registry)
     {
-        var resourceKey = registry.getResourceKey(registry.get(new ResourceLocation(id)));
+        var resourceKey = registry.getResourceKey(registry.get(ResourceLocation.parse(id)));
         if (resourceKey.isPresent())
             return registry.getHolderOrThrow(resourceKey.get());
 
