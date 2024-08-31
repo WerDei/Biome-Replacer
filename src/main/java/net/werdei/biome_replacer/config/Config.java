@@ -5,27 +5,23 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Config
-{
+public class Config {
+
     public static final String FILE_NAME = "biome_replacer.properties";
+    public static final Map<String, String> rules = new HashMap<>();
 
+    public static void createIfAbsent() {
+        File file = getConfigFile();
+        if (file.exists()) {
+            return;
+        }
 
-    public static Map<String, String> rules = new HashMap<>();
-
-
-    public static void createIfAbsent()
-    {
-        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
-        if (file.exists()) return;
-
-        try
-        {
-            var writer = new PrintWriter(file);
+        try (PrintWriter writer = new PrintWriter(file)) {
             writer.println("# Put your rules here in the format:");
             writer.println("# old_biome > new_biome");
             writer.println("# ");
@@ -34,36 +30,34 @@ public class Config
             writer.println("# terralith:lavender_forest > aurorasdeco:lavender_plains");
             writer.println("# terralith:lavender_valley > aurorasdeco:lavender_plains");
             writer.println("# terralith:cave/infested_caves > minecraft:dripstone_caves");
-            writer.close();
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create config file: " + e.getMessage(), e);
         }
     }
 
-    public static void reload()
-    {
+    public static void reload() {
         createIfAbsent();
-        File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), FILE_NAME);
+        File file = getConfigFile();
 
-        try
-        {
-            var reader = new Scanner(file);
+        try (Scanner reader = new Scanner(file)) {
             rules.clear();
-            while (reader.hasNextLine())
-            {
-                var line = reader.nextLine();
-                if (line.length() == 0 || line.startsWith("#")) continue;
-                var result = Arrays.stream(line.split(">")).map(s -> s.replace(" ", "")).toArray(String[]::new);
-                rules.put(result[0], result[1]);
+            while (reader.hasNextLine()) {
+                String line = reader.nextLine().trim();
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue;
+                }
+                String[] result = line.split(">");
+                if (result.length == 2) {
+                    rules.put(result[0].trim(), result[1].trim());
+                }
             }
-            reader.close();
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read config file: " + e.getMessage(), e);
         }
     }
 
+    private static File getConfigFile() {
+        Path configDir = FabricLoader.getInstance().getConfigDir();
+        return configDir.resolve(FILE_NAME).toFile();
+    }
 }
