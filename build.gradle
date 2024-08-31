@@ -106,8 +106,8 @@ tasks.register('curseforge', TaskPublishCurseForge)
     mainFile.displayName = versionDisplayName
     mainFile.addModLoader('Fabric')
     mainFile.addModLoader('Quilt')
-    for (ver in supportedMinecraftVersions)
-    {
-        mainFile.addGameVersion(ver)
+
+    supportedMinecraftVersions.each { version ->
+        mainFile.addGameVersion(version)
     }
 }
