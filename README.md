@@ -1,3 +1,6 @@
+**This mod has a Neoforge 1.21 port:** https://modrinth.com/mod/biome-replacer-neoforge
+
+----
 <!-- modrinth_exclude.start -->
 # Biome Replacer
 Download: 
@@ -44,3 +47,8 @@ Spiders are yucky. Let's remove Terralith's Infested caves:
 terralith:cave/infested_caves > minecraft:dripstone_caves
 ```
 ![Infested Caves are replaced by Dropstone Caves](https://raw.githubusercontent.com/WerDei/Biome-Replacer/master/readme-files/example-4.png)
+
+## Contributors
+Big thanks to these cool people:
+- Etos2
+- LegendarySpy 

@@ -9,6 +9,14 @@
       "name": "WerDei"
     }
   ],
+  "contributors": [
+    {
+      "name": "Etos2"
+    },
+    {
+      "name": "LegendarySpy"
+    }
+  ],
   "contact": {
     "issues": "https://github.com/WerDei/Biome-Replacer/issues",
     "sources": "https://github.com/WerDei/Biome-Replacer",
@@ -28,6 +36,6 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": ">=1.19.4"
+    "minecraft": ">=1.21"
   }
 }
