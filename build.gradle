@@ -1,9 +1,9 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
-    id 'fabric-loom' version '1.2-SNAPSHOT'
-    id "com.modrinth.minotaur" version "2.7.4"
-    id "net.darkhax.curseforgegradle" version "1.1.16"
+    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id "com.modrinth.minotaur" version "2.8.7"
+    id "net.darkhax.curseforgegradle" version "1.1.18"
 }
 
 version = project.mod_version
@@ -23,10 +23,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation "maven.modrinth:modmenu:7.2.1"
-    modImplementation "maven.modrinth:lazydfu:0.1.3"
-
-    modImplementation "maven.modrinth:terralith:2.4.5"
+    modImplementation "maven.modrinth:modmenu:11.0.2"
+    modImplementation "maven.modrinth:terralith:2.5.3"
 }
 
 processResources {
@@ -42,7 +40,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 17
+def targetJavaVersion = 21
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly
@@ -78,43 +76,43 @@ def versionDisplayName = project.mod_name + ' - ' + project.version
 def supportedMinecraftVersions = project.mod_supported_minecraft_versions.split(',').toList()
 def changelogText = new File('./CHANGELOG.md').text
 
-modrinth
-{
-    token = project.modrinth_token
-    projectId = project.modrinth_mod_id
-    versionName = versionDisplayName
-    versionNumber = project.version
-    versionType = project.mod_version_type
+// modrinth
+// {
+//     token = project.modrinth_token
+//     projectId = project.modrinth_mod_id
+//     versionName = versionDisplayName
+//     versionNumber = project.version
+//     versionType = project.mod_version_type
 
-    gameVersions = supportedMinecraftVersions
-    loaders = ["fabric", "quilt"]
-    changelog = changelogText
-    dependencies
-    {
-        required.project "fabric-api"
-    }
+//     gameVersions = supportedMinecraftVersions
+//     loaders = ["fabric", "quilt"]
+//     changelog = changelogText
+//     dependencies
+//     {
+//         required.project "fabric-api"
+//     }
 
-    uploadFile = remapJar
+//     uploadFile = remapJar
 
-    syncBodyFrom = rootProject.file("README.md").text
-}
-tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
+//     syncBodyFrom = rootProject.file("README.md").text
+// }
+// tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 
-tasks.register('curseforge', TaskPublishCurseForge)
-{
-    group 'publishing'
-    apiToken = project.curseforge_token
+// tasks.register('curseforge', TaskPublishCurseForge)
+// {
+//     group 'publishing'
+//     apiToken = project.curseforge_token
 
-    disableVersionDetection()
-    def mainFile = upload(curseforge_mod_id, remapJar)
-    mainFile.changelog = changelogText
-    mainFile.changelogType = 'markdown'
-    mainFile.releaseType = project.mod_version_type
-    mainFile.displayName = versionDisplayName
-    mainFile.addModLoader('Fabric')
-    mainFile.addModLoader('Quilt')
-    for (ver in supportedMinecraftVersions)
-    {
-        mainFile.addGameVersion(ver)
-    }
-}
+//     disableVersionDetection()
+//     def mainFile = upload(curseforge_mod_id, remapJar)
+//     mainFile.changelog = changelogText
+//     mainFile.changelogType = 'markdown'
+//     mainFile.releaseType = project.mod_version_type
+//     mainFile.displayName = versionDisplayName
+//     mainFile.addModLoader('Fabric')
+//     mainFile.addModLoader('Quilt')
+//     for (ver in supportedMinecraftVersions)
+//     {
+//         mainFile.addGameVersion(ver)
+//     }
+// }
