@@ -65,7 +65,7 @@ jar {
     }
 }
 
-// Mod publishing
+// Mod publishing configuration
 
 def versionDisplayName = project.mod_name + ' - ' + project.version
 def supportedMinecraftVersions = project.mod_supported_minecraft_versions.split(',').toList()
