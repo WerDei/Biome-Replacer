@@ -30,6 +30,9 @@ public class Config {
             writer.println("# terralith:lavender_forest > aurorasdeco:lavender_plains");
             writer.println("# terralith:lavender_valley > aurorasdeco:lavender_plains");
             writer.println("# terralith:cave/infested_caves > minecraft:dripstone_caves");
+            writer.println("# for mass biome replacement use biome tags");
+            writer.println("# #minecraft:is_forest > minecraft:desert");
+            writer.println("# #minecraft:is_mountain > minecraft:badlands");
         } catch (IOException e) {
             throw new RuntimeException("Failed to create config file: " + e.getMessage(), e);
         }
@@ -43,7 +46,7 @@ public class Config {
             rules.clear();
             while (reader.hasNextLine()) {
                 String line = reader.nextLine().trim();
-                if (line.isEmpty() || line.startsWith("#")) {
+                if (line.isEmpty() || line.startsWith("# ")) {
                     continue;
                 }
                 String[] result = line.split(">");
