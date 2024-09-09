@@ -22,17 +22,18 @@ public class Config {
         }
 
         try (PrintWriter writer = new PrintWriter(file)) {
-            writer.println("# Put your rules here in the format:");
-            writer.println("# old_biome > new_biome");
-            writer.println("# ");
-            writer.println("# Examples (remove # in front of one to activate it):");
-            writer.println("# minecraft:dark_forest > minecraft:cherry_grove");
-            writer.println("# terralith:lavender_forest > aurorasdeco:lavender_plains");
-            writer.println("# terralith:lavender_valley > aurorasdeco:lavender_plains");
-            writer.println("# terralith:cave/infested_caves > minecraft:dripstone_caves");
-            writer.println("# for mass biome replacement use biome tags");
-            writer.println("# #minecraft:is_forest > minecraft:desert");
-            writer.println("# #minecraft:is_mountain > minecraft:badlands");
+            writer.println("! Put your rules here in the format:");
+            writer.println("! old_biome > new_biome");
+            writer.println("! ");
+            writer.println("! Examples (remove ! in front of one to activate it):");
+            writer.println("! minecraft:dark_forest > minecraft:cherry_grove");
+            writer.println("! terralith:lavender_forest > aurorasdeco:lavender_plains");
+            writer.println("! terralith:lavender_valley > aurorasdeco:lavender_plains");
+            writer.println("! terralith:cave/infested_caves > minecraft:dripstone_caves");
+            writer.println("! ");
+            writer.println("! For mass biome replacement, you can use use biome tags:");
+            writer.println("! #minecraft:is_forest > minecraft:desert");
+            writer.println("! #minecraft:is_mountain > minecraft:badlands");
         } catch (IOException e) {
             throw new RuntimeException("Failed to create config file: " + e.getMessage(), e);
         }
@@ -46,13 +47,12 @@ public class Config {
             rules.clear();
             while (reader.hasNextLine()) {
                 String line = reader.nextLine().trim();
-                if (line.isEmpty() || line.startsWith("# ")) {
+                // Leaving "# " here for backwards compatibility
+                if (line.isEmpty() || line.startsWith("!") || line.startsWith("# "))
                     continue;
-                }
                 String[] result = line.split(">");
-                if (result.length == 2) {
+                if (result.length == 2)
                     rules.put(result[0].trim(), result[1].trim());
-                }
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to read config file: " + e.getMessage(), e);
