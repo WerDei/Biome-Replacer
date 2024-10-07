@@ -1,6 +1,7 @@
 package net.werdei.biome_replacer;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.core.Holder;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
@@ -28,6 +29,11 @@ public class BiomeReplacer implements ModInitializer {
     @Override
     public void onInitialize() {
         Config.createIfAbsent();
+        ServerLifecycleEvents.SERVER_STOPPED.register((l) -> {
+            // To reload the rules after the
+            replacementRules = null;
+            tagReplacementRules = null;
+        });
     }
 
     public static void prepareReplacementRules(LayeredRegistryAccess<RegistryLayer> registryAccess) {
@@ -105,8 +111,12 @@ public class BiomeReplacer implements ModInitializer {
         return original;
     }
 
+    public static boolean isReady() {
+        return replacementRules != null && tagReplacementRules != null;
+    }
+
     public static boolean noReplacements() {
-        return (replacementRules == null || replacementRules.isEmpty()) && (tagReplacementRules == null || tagReplacementRules.isEmpty());
+        return replacementRules.isEmpty() && tagReplacementRules.isEmpty();
     }
 
     public static void log(String message) {
