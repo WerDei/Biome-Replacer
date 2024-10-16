@@ -127,4 +127,10 @@ public class BiomeReplacer implements ModInitializer
     {
         LOGGER.warn(LOG_PREFIX + "{}", message);
     }
+
+
+    public interface Applicator
+    {
+        void biomeReplacer$applyReplacements();
+    }
 }

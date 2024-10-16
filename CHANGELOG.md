@@ -1,1 +1,2 @@
-- Fixed the dreaded "Rules not applying on world load" bug
+- Reworked biome replacement code. This should be unnoticeable for you, but it will prevent rules-not-loading type of bugs from happening again in the future.
+- 

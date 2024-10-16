@@ -1,55 +1,35 @@
 package net.werdei.biome_replacer.mixin;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.biome.Climate;
-import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
+import net.minecraft.world.level.biome.*;
 import net.werdei.biome_replacer.BiomeReplacer;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(MultiNoiseBiomeSource.class)
-public abstract class MultiNoiseBiomeSourceMixin extends BiomeSource
+public abstract class MultiNoiseBiomeSourceMixin implements BiomeReplacer.Applicator
 {
-    @Unique
-    private Climate.ParameterList<Holder<Biome>> modifiedParameters = null;
+    @Shadow @Final @Mutable
+    private Either<Climate.ParameterList<Holder<Biome>>, Holder<MultiNoiseBiomeSourceParameterList>> parameters;
+
+    @Shadow
+    protected abstract Climate.ParameterList<Holder<Biome>> parameters();
 
 
-    @Inject(method = "parameters", at = @At("RETURN"), cancellable = true)
-    private void parameters(CallbackInfoReturnable<Climate.ParameterList<Holder<Biome>>> cir)
+    public void biomeReplacer$applyReplacements()
     {
-        if (modifiedParameters == null)
-            findAndReplace(cir.getReturnValue());
-        cir.setReturnValue(modifiedParameters);
-    }
-
-    @Unique
-    private void findAndReplace(Climate.ParameterList<Holder<Biome>> parameterList)
-    {
-        if (BiomeReplacer.noReplacements())
-        {
-            modifiedParameters = parameterList;
-            BiomeReplacer.log("No rules found, not replacing anything");
-            return;
-        }
-
         List<Pair<Climate.ParameterPoint, Holder<Biome>>> newParameterList = new ArrayList<>();
 
-        for (var value : parameterList.values())
+        for (var value : parameters().values())
             newParameterList.add(new Pair<>(
                     value.getFirst(),
                     BiomeReplacer.replaceIfNeeded(value.getSecond())
             ));
 
-        modifiedParameters = new Climate.ParameterList<>(newParameterList);
-        BiomeReplacer.log("Biomes replaced successfully");
+        parameters = Either.left(new Climate.ParameterList<>(newParameterList));
     }
 }
