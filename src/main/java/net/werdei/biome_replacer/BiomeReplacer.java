@@ -25,10 +25,11 @@ public class BiomeReplacer implements ModInitializer
     private static Map<ResourceKey<Biome>, Holder<Biome>> replacementRules;
     private static Map<TagKey<Biome>, Holder<Biome>> tagReplacementRules;
 
+
     @Override
     public void onInitialize()
     {
-        Config.createIfAbsent();
+        Config.getOrCreateFile();
     }
 
     public static void prepareReplacementRules(LayeredRegistryAccess<RegistryLayer> registryAccess)
@@ -40,60 +41,60 @@ public class BiomeReplacer implements ModInitializer
         Config.reload();
         Config.rules.forEach((oldBiomeId, newBiomeId) ->
         {
-            if (oldBiomeId.startsWith("#"))
+            try
             {
-                // This is a tag
-                var tagKey = getBiomeTagKey(oldBiomeId);
-                var newBiome = getBiomeHolder(newBiomeId, biomeRegistry);
-                if (tagKey != null && newBiome != null)
+                if (oldBiomeId.startsWith("#"))
+                {
+                    // This is a tag
+                    var tagKey = getBiomeTagKey(oldBiomeId);
+                    var newBiome = getBiomeHolder(newBiomeId, biomeRegistry);
                     tagReplacementRules.put(tagKey, newBiome);
-            }
-            else
-            {
-                // This is a specific biome
-                var oldBiome = getBiomeResourceKey(oldBiomeId);
-                var newBiome = getBiomeHolder(newBiomeId, biomeRegistry);
-                if (oldBiome != null && newBiome != null)
+                }
+                else
+                {
+                    // This is a specific biome
+                    var oldBiome = getBiomeResourceKey(oldBiomeId);
+                    var newBiome = getBiomeHolder(newBiomeId, biomeRegistry);
                     replacementRules.put(oldBiome, newBiome);
+                }
+            }
+            catch (Exception e)
+            {
+                logWarn(String.format("Ignoring rule \"%s > %s\" - %s", oldBiomeId, newBiomeId, e.getMessage()));
             }
         });
 
-        log(String.format("Loaded %d biome replacement rules and %d tag replacement rules", replacementRules.size(), tagReplacementRules.size()));
+        var loaded = replacementRules.size() + tagReplacementRules.size();
+        log(String.format("Loaded %d and ignored %d rules", loaded, Config.rules.size() - loaded));
     }
 
-    private static ResourceKey<Biome> getBiomeResourceKey(String id)
+    private static ResourceKey<Biome> getBiomeResourceKey(String id) throws Exception
     {
         ResourceLocation resourceLocation = ResourceLocation.tryParse(id);
         if (resourceLocation == null)
-        {
-            logWarn(String.format("Invalid biome ID: %s. The rule will be ignored.", id));
-            return null;
-        }
+            throw new Exception(String.format("Invalid biome ID: %s", id));
         return ResourceKey.create(Registries.BIOME, resourceLocation);
     }
 
-    private static TagKey<Biome> getBiomeTagKey(String id)
+    private static TagKey<Biome> getBiomeTagKey(String id) throws Exception
     {
         ResourceLocation resourceLocation = ResourceLocation.tryParse(id.substring(1));
         if (resourceLocation == null)
-        {
-            logWarn(String.format("Invalid biome tag: %s. The rule will be ignored.", id));
-            return null;
-        }
+            throw new Exception(String.format("Invalid biome tag: %s", id));
         return TagKey.create(Registries.BIOME, resourceLocation);
     }
 
 
-    private static Holder<Biome> getBiomeHolder(String id, Registry<Biome> registry)
+    private static Holder<Biome> getBiomeHolder(String id, Registry<Biome> registry) throws Exception
     {
+        if (id.equals(Config.REMOVE_BIOME_KEYWORD))
+            return null;
+
         var resourceKey = getBiomeResourceKey(id);
-        if (resourceKey != null)
-        {
-            Optional<Holder.Reference<Biome>> holder = registry.getHolder(resourceKey);
-            if (holder.isPresent()) return holder.get();
-        }
-        logWarn(String.format("Biome %s not found. The rule will be ignored.", id));
-        return null;
+        Optional<Holder.Reference<Biome>> holder = registry.getHolder(resourceKey);
+        if (holder.isPresent()) return holder.get();
+
+        throw new Exception(String.format("Biome %s is not registered", id));
     }
 
     public static Holder<Biome> replaceIfNeeded(Holder<Biome> original)

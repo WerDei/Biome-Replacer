@@ -25,10 +25,11 @@ public abstract class MultiNoiseBiomeSourceMixin implements BiomeReplacer.Applic
         List<Pair<Climate.ParameterPoint, Holder<Biome>>> newParameterList = new ArrayList<>();
 
         for (var value : parameters().values())
-            newParameterList.add(new Pair<>(
-                    value.getFirst(),
-                    BiomeReplacer.replaceIfNeeded(value.getSecond())
-            ));
+        {
+            var newBiome = BiomeReplacer.replaceIfNeeded(value.getSecond());
+            if (newBiome == null) continue;
+            newParameterList.add(new Pair<>(value.getFirst(), newBiome));
+        }
 
         parameters = Either.left(new Climate.ParameterList<>(newParameterList));
     }
