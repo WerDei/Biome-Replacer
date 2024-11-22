@@ -36,7 +36,7 @@ public class BiomeReplacer implements ModInitializer
     {
         replacementRules = new HashMap<>();
         tagReplacementRules = new HashMap<>();
-        var biomeRegistry = registryAccess.compositeAccess().registryOrThrow(Registries.BIOME);
+        var biomeRegistry = registryAccess.compositeAccess().lookupOrThrow(Registries.BIOME);
 
         Config.reload();
         Config.rules.forEach((oldBiomeId, newBiomeId) ->
@@ -91,7 +91,7 @@ public class BiomeReplacer implements ModInitializer
             return null;
 
         var resourceKey = getBiomeResourceKey(id);
-        Optional<Holder.Reference<Biome>> holder = registry.getHolder(resourceKey);
+        Optional<Holder.Reference<Biome>> holder = registry.get(resourceKey);
         if (holder.isPresent()) return holder.get();
 
         throw new Exception(String.format("Biome %s is not registered", id));

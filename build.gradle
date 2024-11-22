@@ -23,20 +23,20 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    modImplementation "maven.modrinth:modmenu:11.0.2"
-    modImplementation "maven.modrinth:terralith:2.5.3"
+    modImplementation "maven.modrinth:modmenu:12.0.0-beta.1"
+    modImplementation "maven.modrinth:terralith:2.5.6"
 }
 
 processResources {
     inputs.property "version", project.version
-    inputs.property "minecraft_version", project.minecraft_version
     inputs.property "loader_version", project.loader_version
+    inputs.property "supported_version_range", project.supported_version_range
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version,
-                "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
+                "loader_version": project.loader_version,
+                "supported_version_range": project.supported_version_range
     }
 }
 
@@ -79,7 +79,7 @@ def changelogText = new File('./CHANGELOG.md').text
 
 modrinth
 {
-    token = project.modrinth_token
+    token = project.hasProperty("modrinth_token") ? project.modrinth_token : ''
     projectId = project.modrinth_mod_id
     versionName = versionDisplayName
     versionNumber = project.version

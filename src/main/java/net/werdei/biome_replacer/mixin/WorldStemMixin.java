@@ -31,7 +31,7 @@ public abstract class WorldStemMixin
         if (BiomeReplacer.noReplacements()) return;
 
         var access = registries().compositeAccess();
-        var levelRegistry = access.registry(Registries.LEVEL_STEM).orElseThrow();
+        var levelRegistry = access.lookupOrThrow(Registries.LEVEL_STEM);
         for (LevelStem level : levelRegistry)
         {
             ResourceKey<LevelStem> key = levelRegistry.getResourceKey(level).orElseThrow();
