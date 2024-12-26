@@ -55,9 +55,9 @@ public abstract class WorldStemMixin
                 }
                 accessedBiomeSource.setParameters(Either.left(new Climate.ParameterList<>(newParameterList)));
                 
-                BiomeReplacer.log("Successfully replaced biomes in " + level.key());
+                BiomeReplacer.log("Successfully replaced biomes in " + level.key().location());
             }
-            else BiomeReplacer.log("Skipping " + level.key());
+            else BiomeReplacer.log("Skipping " + level.key().location());
         }
     }
 }
