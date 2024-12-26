@@ -2,8 +2,8 @@ package net.werdei.biome_replacer;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.LayeredRegistryAccess;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -85,7 +85,7 @@ public class BiomeReplacer implements ModInitializer
     }
 
 
-    private static Holder<Biome> getBiomeHolder(String id, Registry<Biome> registry) throws Exception
+    private static Holder<Biome> getBiomeHolder(String id, HolderLookup.RegistryLookup<Biome> registry) throws Exception
     {
         if (id.equals(Config.REMOVE_BIOME_KEYWORD))
             return null;
