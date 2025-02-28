@@ -1,4 +1,4 @@
-**This mod has a Neoforge 1.21 port:** https://modrinth.com/mod/biome-replacer-neoforge
+**This mod has a Forge/Neoforge port:** https://modrinth.com/mod/biome-replacer-neoforge
 
 ----
 <!-- modrinth_exclude.start -->

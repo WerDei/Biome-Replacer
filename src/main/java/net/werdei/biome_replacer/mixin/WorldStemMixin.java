@@ -5,7 +5,6 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.WorldStem;
@@ -13,7 +12,6 @@ import net.minecraft.server.packs.resources.CloseableResourceManager;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
-import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.storage.WorldData;
 import net.werdei.biome_replacer.BiomeReplacer;
@@ -38,16 +36,14 @@ public abstract class WorldStemMixin
         BiomeReplacer.prepareReplacementRules(registries());
         if (BiomeReplacer.noReplacements()) return;
 
-        var access = registries().compositeAccess();
-        var levelRegistry = access.lookupOrThrow(Registries.LEVEL_STEM);
-        for (var level : levelRegistry)
+        registries().compositeAccess().lookupOrThrow(Registries.LEVEL_STEM).listElements().forEach(level ->
         {
-            ResourceKey<LevelStem> key = levelRegistry.getResourceKey(level).orElseThrow();
-            if (level.generator() instanceof NoiseBasedChunkGenerator generator
-                    && generator.getBiomeSource() instanceof MultiNoiseBiomeSource biomeSource)
+            var levelId = level.key().location();
+            if (level.value().generator() instanceof NoiseBasedChunkGenerator generator
+                    && generator.getBiomeSource() instanceof MultiNoiseBiomeSource)
             {
-                var accessedBiomeSource = (MultiNoiseBiomeSourceAccessor) biomeSource;
-                var parameters = accessedBiomeSource.getParameters().map((p) -> p, (holder) -> holder.value().parameters());
+                var biomeSource = (MultiNoiseBiomeSourceAccessor) generator.getBiomeSource();
+                var parameters = biomeSource.getParameters().map((p) -> p, (holder) -> holder.value().parameters());
                 
                 List<Pair<Climate.ParameterPoint, Holder<Biome>>> newParameterList = new ArrayList<>();
                 for (var value : parameters.values())
@@ -56,11 +52,11 @@ public abstract class WorldStemMixin
                     if (newBiome == null) continue;
                     newParameterList.add(new Pair<>(value.getFirst(), newBiome));
                 }
-                accessedBiomeSource.setParameters(Either.left(new Climate.ParameterList<>(newParameterList)));
+                biomeSource.setParameters(Either.left(new Climate.ParameterList<>(newParameterList)));
                 
-                BiomeReplacer.log("Successfully replaced biomes in " + key.location());
+                BiomeReplacer.log("Successfully replaced biomes in " + levelId);
             }
-            else BiomeReplacer.log("Skipping " + key.location());
-        }
+            else BiomeReplacer.log("Skipping " + levelId);
+        });
     }
 }
