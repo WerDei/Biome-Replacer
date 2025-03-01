@@ -1,6 +1,5 @@
 package net.werdei.biome_replacer;
 
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
@@ -13,12 +12,10 @@ import net.minecraft.world.level.biome.Biome;
 import net.werdei.biome_replacer.config.Config;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-public class BiomeReplacer implements ModInitializer
+public class BiomeReplacer
 {
     private static final Logger LOGGER = LogManager.getLogger(BiomeReplacer.class);
     private static final String LOG_PREFIX = "[BiomeReplacer] ";
@@ -26,8 +23,7 @@ public class BiomeReplacer implements ModInitializer
     private static Map<TagKey<Biome>, Holder<Biome>> tagReplacementRules;
 
 
-    @Override
-    public void onInitialize()
+    public static void initialize()
     {
         Config.getOrCreateFile();
     }
@@ -36,7 +32,10 @@ public class BiomeReplacer implements ModInitializer
     {
         replacementRules = new HashMap<>();
         tagReplacementRules = new HashMap<>();
-        var biomeRegistry = registryAccess.compositeAccess().lookupOrThrow(Registries.BIOME);
+        //? if >=1.21.4
+        /*var biomeRegistry = registryAccess.compositeAccess().lookupOrThrow(Registries.BIOME);*/
+        //? if <1.21.4
+        var biomeRegistry = registryAccess.compositeAccess().registryOrThrow(Registries.BIOME);
 
         Config.reload();
         Config.rules.forEach((oldBiomeId, newBiomeId) ->
@@ -91,7 +90,12 @@ public class BiomeReplacer implements ModInitializer
             return null;
 
         var resourceKey = getBiomeResourceKey(id);
-        Optional<Holder.Reference<Biome>> holder = registry.get(resourceKey);
+        
+        //? if >=1.21.2
+        /*var holder = registry.get(resourceKey);*/
+        //? if <1.21.2
+        var holder = registry.getHolder(resourceKey);
+        
         if (holder.isPresent()) return holder.get();
 
         throw new Exception(String.format("Biome %s is not registered", id));

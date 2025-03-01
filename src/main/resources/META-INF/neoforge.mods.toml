@@ -1,0 +1,29 @@
+modLoader = "javafml"
+loaderVersion = "*"
+issueTrackerURL = "${issues}"
+license = "${license}"
+
+[[mods]]
+modId = "${id}"
+version = "${version}"
+displayName = "${name}"
+authors = "Microcontrollers"
+description = "${description}"
+logoFile = "icon.png"
+
+[["dependencies.${id}"]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${forgeConstraint}"
+ordering = "NONE"
+side = "CLIENT"
+
+[["dependencies.${id}"]]
+modId = "minecraft"
+type = "required"
+versionRange = "${mcdep}"
+ordering = "NONE"
+side = "CLIENT"
+
+[[mixins]]
+config = "${id}.mixins.json"

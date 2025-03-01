@@ -1,1 +1,2 @@
-- Small code rewrite
+- Now supports both Fabric and Neoforge/Forge, across every version since 1.19.4
+- Removed Fabric API dependency (it wasn't used anyway)

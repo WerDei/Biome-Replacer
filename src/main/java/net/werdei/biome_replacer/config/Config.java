@@ -1,11 +1,9 @@
 package net.werdei.biome_replacer.config;
 
-import net.fabricmc.loader.api.FabricLoader;
-
+import net.werdei.biome_replacer.Platform;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -43,8 +41,7 @@ public class Config
 
     public static File getOrCreateFile()
     {
-        Path configDir = FabricLoader.getInstance().getConfigDir();
-        var file = configDir.resolve(FILE_NAME).toFile();
+        var file = Platform.getConfigFile();
 
         if (file.exists()) return file;
 
