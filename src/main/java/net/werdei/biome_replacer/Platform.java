@@ -6,16 +6,14 @@ import net.werdei.biome_replacer.config.Config;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 //?} else if neoforge {
-/*import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.fml.common.Mod;
+/*import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 *///?}
 
 
-//? if neoforge
-/*@Mod(value = Mod.id, dist = Dist.CLIENT)*/
+//? if neoforge {
+/*@Mod(value = "biome_replacer")
+*///?}
 public class Platform /*? if fabric {*/ implements ModInitializer /*?}*/
 {
     //? if fabric {

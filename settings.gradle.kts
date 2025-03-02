@@ -27,10 +27,25 @@ extensions.configure<StonecutterSettings> {
 			}
 		}
 
-		//TODO 1.19?
-		//TODO dedicated lexforge 1.20.1 port?
-		mc("1.20.1", listOf("fabric", "neoforge")) //Works across 1.19.4 - 1.21.1
-		mc("1.21.4", listOf("fabric", "neoforge")) // 1.21.2 - 1.21.4
+		// It's a good practice to append MC version to your mod's version, but since our builds work across
+		// multiple Minecraft versions, it might be confusing to see, like, version 2.0-mc1.19.4 working on 1.21.
+		// To solve this non-issue and make it harder to understand, Minecraft versions that a mod is loading on
+		// will now have a codename, to group them.
+
+		// Codename Toad
+		// Works across Idk didn't get to it yet
+		mc("1.19.2", listOf("fabric"))
+
+		// Codename Elephant
+		// Works across 1.19.4 - 1.21.1 for fabric, 1.20.5 - 1.21.1 for neo
+		// (neo had made some changes on 20.5, and I can't be bothered to make it "pretty")
+		mc("1.20.6", listOf("fabric", "neoforge"))
+
+		// Codename Fish
+		// Works across 1.21.2 - 1.21.4
+		mc("1.21.4", listOf("fabric", "neoforge"))
+
+		//TODO lexforge ports for 1.20?
 
 		vcsVersion("1.21.4-fabric")
 	}

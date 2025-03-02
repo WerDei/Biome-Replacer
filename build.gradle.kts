@@ -31,6 +31,7 @@ class McData {
 	val version = property("mod.mc_version")
 	val dep = property("mod.mc_dep")
 	val targets = property("mod.mc_targets").toString().split(", ")
+	val codename = property("mod.mc_codename")
 }
 
 val mc = McData()
@@ -38,9 +39,9 @@ val mod = ModData()
 val deps = Dependencies()
 val loader = LoaderData()
 
-version = "${mod.version}+mc${mc.version}-${loader.loader}"
+version = "${mod.version}-${mc.codename}-${loader.loader}"
 group = mod.group
-base { archivesName.set(mod.id) }
+base { archivesName.set(mod.id.replace("_", "")) }
 
 stonecutter.const("fabric", loader.isFabric)
 stonecutter.const("neoforge", loader.isNeoforge)
@@ -86,10 +87,10 @@ dependencies {
 	{
 		modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
 		modImplementation("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
+		modImplementation("com.terraformersmc:modmenu:${deps.modmenuVersion}")
 //		if (mc.version == "1.21.3") modImplementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21.2-${loader.loader}")
 //		else if (mc.version == "1.21.1") modImplementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21-${loader.loader}")
 //		else modImplementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+${mc.version}-${loader.loader}")
-		modImplementation("com.terraformersmc:modmenu:${deps.modmenuVersion}")
 	}
 	else if (loader.isNeoforge)
 	{
@@ -103,7 +104,7 @@ dependencies {
 java {
 	val java = if (stonecutter.compare(
 			stonecutter.current.version,
-			"1.20.6"
+			"1.21" // Not 1.20.5 because I want Elephant builds to load on more versions (which means using java 17)
 		) >= 0
 	) JavaVersion.VERSION_21 else JavaVersion.VERSION_17
 	sourceCompatibility = java

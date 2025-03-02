@@ -33,9 +33,9 @@ public class BiomeReplacer
         replacementRules = new HashMap<>();
         tagReplacementRules = new HashMap<>();
         //? if >=1.21.4
-        /*var biomeRegistry = registryAccess.compositeAccess().lookupOrThrow(Registries.BIOME);*/
+        var biomeRegistry = registryAccess.compositeAccess().lookupOrThrow(Registries.BIOME);
         //? if <1.21.4
-        var biomeRegistry = registryAccess.compositeAccess().registryOrThrow(Registries.BIOME);
+        /*var biomeRegistry = registryAccess.compositeAccess().registryOrThrow(Registries.BIOME);*/
 
         Config.reload();
         Config.rules.forEach((oldBiomeId, newBiomeId) ->
@@ -92,9 +92,9 @@ public class BiomeReplacer
         var resourceKey = getBiomeResourceKey(id);
         
         //? if >=1.21.2
-        /*var holder = registry.get(resourceKey);*/
-        //? if <1.21.2
-        var holder = registry.getHolder(resourceKey);
+        var holder = registry.get(resourceKey);
+        //? if >=1.19.4 <1.21.2
+        /*var holder = registry.getHolder(resourceKey);*/
         
         if (holder.isPresent()) return holder.get();
 

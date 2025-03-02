@@ -5,9 +5,23 @@
 	"name": "${name}",
 	"description": "${description}",
 	"authors": [
-		"werdei"
+		{
+			"name": "werdei",
+			"contact": {
+				"homepage": "https://modrinth.com/user/werdei"
+			}
+		}
 	],
 	"contributors": [
+		{
+			"name": "LegendarySpy",
+			"contact": {
+				"homepage": "https://modrinth.com/user/LegendarySpy"
+			}
+		},
+		{
+			"name": "Etos2"
+		}
 	],
 	"contact": {
 		"homepage": "${modrinth}",
