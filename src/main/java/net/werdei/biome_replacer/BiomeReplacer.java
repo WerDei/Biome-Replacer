@@ -1,12 +1,9 @@
 package net.werdei.biome_replacer;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.RegistryLayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.werdei.biome_replacer.config.Config;
@@ -14,6 +11,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
+//? if >=1.19.4 {
+import net.minecraft.core.registries.Registries;
+//?}
+
 
 public class BiomeReplacer
 {
@@ -21,21 +22,17 @@ public class BiomeReplacer
     private static final String LOG_PREFIX = "[BiomeReplacer] ";
     private static Map<ResourceKey<Biome>, Holder<Biome>> replacementRules;
     private static Map<TagKey<Biome>, Holder<Biome>> tagReplacementRules;
-
+    
 
     public static void initialize()
     {
         Config.getOrCreateFile();
     }
 
-    public static void prepareReplacementRules(LayeredRegistryAccess<RegistryLayer> registryAccess)
+    public static void prepareReplacementRules(Registry<Biome> biomeRegistry)
     {
         replacementRules = new HashMap<>();
         tagReplacementRules = new HashMap<>();
-        //? if >=1.21.4
-        var biomeRegistry = registryAccess.compositeAccess().lookupOrThrow(Registries.BIOME);
-        //? if <1.21.4
-        /*var biomeRegistry = registryAccess.compositeAccess().registryOrThrow(Registries.BIOME);*/
 
         Config.reload();
         Config.rules.forEach((oldBiomeId, newBiomeId) ->
@@ -72,7 +69,10 @@ public class BiomeReplacer
         ResourceLocation resourceLocation = ResourceLocation.tryParse(id);
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome ID: %s", id));
+        //? if >=1.19.4
         return ResourceKey.create(Registries.BIOME, resourceLocation);
+        //? if <1.19.4
+        /*return ResourceKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
     }
 
     private static TagKey<Biome> getBiomeTagKey(String id) throws Exception
@@ -80,7 +80,10 @@ public class BiomeReplacer
         ResourceLocation resourceLocation = ResourceLocation.tryParse(id.substring(1));
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome tag: %s", id));
+        //? if >=1.19.4
         return TagKey.create(Registries.BIOME, resourceLocation);
+        //? if <1.19.4
+        /*return TagKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
     }
 
 
@@ -93,7 +96,7 @@ public class BiomeReplacer
         
         //? if >=1.21.2
         var holder = registry.get(resourceKey);
-        //? if >=1.19.4 <1.21.2
+        //? if <1.21.2
         /*var holder = registry.getHolder(resourceKey);*/
         
         if (holder.isPresent()) return holder.get();

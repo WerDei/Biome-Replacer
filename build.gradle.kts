@@ -116,14 +116,12 @@ tasks.processResources {
 		put("id", mod.id)
 		put("name", mod.name)
 		put("version", mod.version)
-		put("mcdep", mc.dep)
+		put("minecraft", mc.dep)
 		put("description", mod.description)
 		put("source", mod.source)
 		put("issues", mod.issues)
 		put("license", mod.license)
 		put("modrinth", mod.modrinth)
-		put("modmenu_version", deps.modmenuVersion)
-		put("yacl_version", deps.yaclVersion)
 
 		if (loader.isNeoforge) {
 			put("forgeConstraint", findProperty("modstoml.forge_constraint"))
