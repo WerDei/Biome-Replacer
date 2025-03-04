@@ -5,7 +5,7 @@ plugins {
 class ModData {
 	val id = property("mod.id").toString()
 	val name = property("mod.name")
-	val version = property("mod.version")
+	val version = "${property("mod.version")}-${property("mod.mc_codename")}"
 	val group = property("mod.group").toString()
 	val description = property("mod.description")
 	val source = property("mod.source")
@@ -31,7 +31,6 @@ class McData {
 	val version = property("mod.mc_version")
 	val dep = property("mod.mc_dep")
 	val targets = property("mod.mc_targets").toString().split(", ")
-	val codename = property("mod.mc_codename")
 }
 
 val mc = McData()
@@ -39,7 +38,7 @@ val mod = ModData()
 val deps = Dependencies()
 val loader = LoaderData()
 
-version = "${mod.version}-${mc.codename}-${loader.loader}"
+version = "${mod.version}-${loader.loader}"
 group = mod.group
 base { archivesName.set(mod.id.replace("_", "")) }
 
