@@ -13,14 +13,14 @@ description = "${description}"
 logoFile = "icon.png"
 
 [["dependencies.${id}"]]
-modId = "neoforge"
-type = "required"
+modId = "forge"
+type = "optional"
 versionRange = "${forgeConstraint}"
 
 [["dependencies.${id}"]]
 modId = "minecraft"
 type = "required"
-versionRange = "${mcdep}"
+versionRange = "${minecraft}"
 
 [[mixins]]
 config = "${id}.mixins.json"

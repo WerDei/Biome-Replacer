@@ -25,10 +25,12 @@ class LoaderData {
 	val loader = loom.platform.get().name.lowercase()
 	val isFabric = loader == "fabric"
 	val isNeoforge = loader == "neoforge"
+	val isLexforge = loader == "forge"
+	val isForgeLike = isNeoforge || isLexforge
 }
 
 class McData {
-	val version = property("mod.mc_version")
+	val version = stonecutter.current.version
 	val dep = property("mod.mc_dep")
 	val targets = property("mod.mc_targets").toString().split(", ")
 }
@@ -44,6 +46,8 @@ base { archivesName.set(mod.id.replace("_", "")) }
 
 stonecutter.const("fabric", loader.isFabric)
 stonecutter.const("neoforge", loader.isNeoforge)
+stonecutter.const("lexforge", loader.isLexforge)
+stonecutter.const("forge-like", loader.isForgeLike)
 
 loom {
 	silentMojangMappingsLicense()
@@ -54,6 +58,9 @@ loom {
 	}
 
 	runConfigs.remove(runConfigs["server"])
+
+	if (loader.isLexforge)
+		forge.mixinConfig("biome_replacer.mixins.json")
 }
 
 repositories {
@@ -76,17 +83,18 @@ dependencies {
 
 		// Parchment mappings (it adds parameter mappings & javadoc)
 		optionalProp("deps.parchment_version") {
-			parchment("org.parchmentmc.data:parchment-${property("mod.mc_version")}:$it@zip")
+			parchment("org.parchmentmc.data:parchment-${mc.version}:$it@zip")
 		}
 	})
 
-	modRuntimeOnly("me.djtheredstoner:DevAuth-${loader.loader}:${deps.devauthVersion}")
+	if (!loader.isLexforge)
+		modRuntimeOnly("me.djtheredstoner:DevAuth-${loader.loader}:${deps.devauthVersion}")
 
 	if (loader.isFabric)
 	{
 		modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-		modImplementation("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
-		modImplementation("com.terraformersmc:modmenu:${deps.modmenuVersion}")
+		modRuntimeOnly("com.terraformersmc:modmenu:${deps.modmenuVersion}")
+		modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
 //		if (mc.version == "1.21.3") modImplementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21.2-${loader.loader}")
 //		else if (mc.version == "1.21.1") modImplementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21-${loader.loader}")
 //		else modImplementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+${mc.version}-${loader.loader}")
@@ -98,14 +106,21 @@ dependencies {
 //		else if (mc.version == "1.21.1") implementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21-${loader.loader}") {isTransitive = false}
 //		else implementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21.2-${loader.loader}") {isTransitive = false}
 	}
+	else if (loader.isLexforge)
+	{
+		"forge"("net.minecraftforge:forge:${mc.version}-${findProperty("deps.forge")}")
+//		"io.github.llamalad7:mixinextras-forge:${mod.dep("mixin_extras")}".let {
+//			implementation(it)
+//			include(it)
+//		}
+	}
 }
 
 java {
-	val java = if (stonecutter.compare(
-			stonecutter.current.version,
-			"1.21" // Not 1.20.5 because I want Elephant builds to load on more versions (which means using java 17)
-		) >= 0
-	) JavaVersion.VERSION_21 else JavaVersion.VERSION_17
+	// I want codename Elephant builds on fabric to load before 1.20.5 too, so it's built for java 17
+	val java = if (stonecutter.compare(stonecutter.current.version, "1.20.5" ) < 0
+		|| (stonecutter.current.version == "1.20.6" && loader.isFabric))
+		JavaVersion.VERSION_17 else JavaVersion.VERSION_21
 	sourceCompatibility = java
 	targetCompatibility = java
 }
@@ -122,29 +137,28 @@ tasks.processResources {
 		put("license", mod.license)
 		put("modrinth", mod.modrinth)
 
-		if (loader.isNeoforge) {
+		if (loader.isForgeLike) {
 			put("forgeConstraint", findProperty("modstoml.forge_constraint"))
-		}
-		if (mc.version == "1.20.1" || mc.version == "1.20.4") {
-			put("forge_id", loader.loader)
 		}
 	}
 
 	props.forEach(inputs::property)
 
-	if (loader.isFabric) {
+	if (loader.isFabric)
+	{
 		filesMatching("fabric.mod.json") { expand(props) }
-		exclude(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml"))
+		exclude(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml", "pack.mcmeta"))
 	}
-
-	if (loader.isNeoforge) {
-		if (mc.version == "1.20.4") {
-			filesMatching("META-INF/mods.toml") { expand(props) }
-			exclude("fabric.mod.json", "META-INF/neoforge.mods.toml")
-		} else {
-			filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
-			exclude("fabric.mod.json", "META-INF/mods.toml")
-		}
+	else if (loader.isNeoforge)
+	{
+		filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
+		exclude("fabric.mod.json", "META-INF/mods.toml", "pack.mcmeta")
+	}
+	else if (loader.isLexforge)
+	{
+		filesMatching("META-INF/mods.toml") { expand(props) }
+		filesMatching("pack.mcmeta") { expand(props) }
+		exclude("fabric.mod.json", "META-INF/neoforge.mods.toml")
 	}
 }
 

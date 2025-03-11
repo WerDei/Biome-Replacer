@@ -20,7 +20,7 @@ versionRange = "${forgeConstraint}"
 [["dependencies.${id}"]]
 modId = "minecraft"
 type = "required"
-versionRange = "${mcdep}"
+versionRange = "${minecraft}"
 
 [[mixins]]
 config = "${id}.mixins.json"

@@ -38,15 +38,14 @@ extensions.configure<StonecutterSettings> {
 		mc("1.19.2", listOf("fabric"))
 
 		// Codename Elephant
-		// Works across 1.19.4 - 1.21.1 for fabric, 1.20.5 - 1.21.1 for neo
-		// (neo had made some changes on 20.5, and I can't be bothered to make it "pretty")
+		// Works across 1.19.4 - 1.21.1 for Fabric, 1.20.5 - 1.21.1 for Neo, 1.20-1.20.1 for Forge
+		// (neo had made some changes on 20.5, and I can't be bothered to make it load both on and before it)
 		mc("1.20.6", listOf("fabric", "neoforge"))
+		mc("1.20.1", listOf("lexforge"))
 
 		// Codename Minnow
 		// Works across 1.21.2 - 1.21.4
 		mc("1.21.4", listOf("fabric", "neoforge"))
-
-		//TODO lexforge ports for <=1.20?
 
 		vcsVersion("1.21.4-fabric")
 	}
