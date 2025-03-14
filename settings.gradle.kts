@@ -35,7 +35,7 @@ extensions.configure<StonecutterSettings> {
 		// Codename Toad
 		// Works across 1.18.2 - 1.19.2
 		// Unfortunately it crashes on 1.19.3, but that version is kinda irrelevant now so idk if its worth its own port
-		mc("1.19.2", listOf("fabric"))
+		mc("1.19.2", listOf("fabric", "lexforge"))
 
 		// Codename Elephant
 		// Works across 1.19.4 - 1.21.1 for Fabric, 1.20.5 - 1.21.1 for Neo, 1.20-1.20.1 for Forge
