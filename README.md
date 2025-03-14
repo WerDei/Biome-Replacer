@@ -8,6 +8,9 @@
   <img src="https://img.shields.io/badge/MC-1.19+-green?style=flat&logo=minecraft&logoColor=white" alt="Minecraft Versions">
   <img src="https://img.shields.io/badge/Side-Server-orange?style=flat" alt="Server Side">
   <img src="https://img.shields.io/github/license/WerDei/Biome-Replacer?style=flat&color=purple" alt="License">
+<a href="https://discord.gg/z3h4d3Ux3p" target="_blank">
+    <img src="https://img.shields.io/discord/1206800378486726716?style=flat&logo=Discord&label=Unofficial%20Discord&color=%235765F2" alt="Discord">
+</a>
 </div>
 
 <div align="center">
