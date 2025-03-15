@@ -19,60 +19,87 @@
 
 ## Overview
 
-**Biome Replacer** lets you control biome distribution without changing terrain generation. Replace any biome with another while preserving the landscape's shape and only changing biome-specific features like colors, mob spawns, and vegetation.
+**Biome Replacer** lets you control biome distribution without changing terrain generation. 
+Replace any biome with another while preserving the landscape's shape and only changing biome-specific features 
+like colors, mob spawns, and vegetation.
 
-### Use Cases:
+### Use cases:
 
-* Remove unwanted biomes
-* Fix mod compatibility issues
-* Enhance almost-perfect world seeds
-* Create custom world experiences
-* Complement worldgen mods like Terralith
+- Remove unwanted biomes
+- Configure worldgen datapacks like Terralith
+- Fix mod compatibility issues
+- Enhance almost-perfect world seeds
+- Create custom world experiences
 
 ## Features
 
-* **Simple Biome Swapping:** Replace biomes with an easy rule system
-* **Tag Support:** Replace entire biome categories at once
-* **Server-Side:** No client installation needed
-* **Easy Config:** Simple properties file with intuitive syntax
+- **Simple Biome Swapping:** Replace biomes with an easy rule system
+- **Tag Support:** Replace entire biome categories at once
+- **Server-Side:** No client installation needed (unless you want to use it in singleplayer, of course!)
+- **Easy Config:** Simple properties file with intuitive syntax
 
-## Experimental Features
-* **Chance based replacement:** Replace any percentage of a biome
+### Experimental features
+These haven't been tested thoroughly yet, and can be changed or removed in future versions.
+They can potentially damage your world, so be careful!
+- **Full biome removal:** remove a biome completely instead of replacing it with another
+- **Chance based replacement:** Replace any percentage of a biome
 
 
 ## Compatibility
 
-* **Works With:** Vanilla biomes and most datapack biomes (including Terralith)
-* **Limited Support:** TerraBlender, Biolith or Lithosphere biomes (use their native options instead)
-* **Generally Compatible:** Works with most worldgen mods (report issues [here](https://github.com/WerDei/Biome-Replacer/issues))
+- **Works With:** Vanilla and datapack biomes (including Terralith)
+- **Limited Support:** TerraBlender, Biolith or Lithosphere biomes (use their native options instead)
+- **Generally Compatible:** Works with most worldgen mods (report issues [here](https://github.com/WerDei/Biome-Replacer/issues))
+
+Note: Currently, if you install TerraBlender and try to replace a _vanilla_ biome, 
+it might sometimes still appear in the world. See [this issue](https://github.com/WerDei/Biome-Replacer/issues/21) for more information.  
+(Oh, and if you are a developer knowledgeable in TB's workings, we'd appreciate the help on fixing this!)
 
 ## Setup
 
-1. Install the mod on your server (or client if your playing singleplayer)
-2. Run the server once to generate config
-3. Find `biome_replacer.properties` in the `config` folder
-4. Add your replacement rules
+1. Install the mod, then run your client/server once to generate configuration file
+2. Find `biome_replacer.properties` in the `config` folder
+3. Add your replacement rules, then load up the world  
+
+Tip: on client, you don't deed to restart the game every time you change your rules, you can simply leave and enter the world again.
 
 ### Configuration
 
-#### Basic Replacement
-
+#### Basic replacement
 ```
 minecraft:dark_forest > minecraft:cherry_grove
 ```
 
-#### Tag-Based Replacement
-
+#### Tag-Based replacement
 ```
 #minecraft:is_forest > minecraft:desert
 ```
 
 #### Options
-
 ```
 # Disable chat notifications
 muteChatInfo = true
 ```
+
+<details>
+<summary>Experimental features</summary>
+
+Reminder: these aren't fully tested! 
+Make sure everything works as it should before using these in a world you care about!
+
+#### Remove biome without replacement
+```
+minecraft:desert > null
+```
+
+#### Chance-based replacement
+```
+! old_biome > new_biome [probability]
+! For reference: 0.9 = 90%, 0.5 = 50%, 0.1 = 10%, etc.
+minecraft:taiga > minecraft:desert 0.5
+#minecraft:is_mountain > minecraft:badlands 0.35
+```
+</details>
 
 ## Examples
 
@@ -93,10 +120,12 @@ minecraft:dark_forest > minecraft:cherry_grove
 ```
 #minecraft:is_forest > minecraft:desert
 ```
-![Replacing all forests with deserts](https://cdn.modrinth.com/data/cached_images/03a6cb91021fd0a49b3c0be323c7427b097027fe_0.webp)
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/WerDei/Biome-Replacer/omniversion/readme-files/example-5.png" alt="Two forest types replaced by Desert">
+</div>
 
-### Mod Integration
+### Adding mod compatibility
 
 **Config:**
 ```
@@ -108,7 +137,7 @@ terralith:lavender_valley > aurorasdeco:lavender_plains
   <img src="https://raw.githubusercontent.com/WerDei/Biome-Replacer/master/readme-files/example-2.png" alt="Lavender Forest replaced by Lavender Plains">
 </div>
 
-### Fixing Problem Biomes
+### Removing unwanted biomes
 
 **Config:**
 ```

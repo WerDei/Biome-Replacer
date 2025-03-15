@@ -112,24 +112,15 @@ public class Config
         try (PrintWriter writer = new PrintWriter(file))
         {
             writer.println("! Put your rules here in the format:");
-            writer.println("! old_biome > new_biome [probability] (Defaults to 100%)");
+            writer.println("! old_biome > new_biome");
             writer.println("! ");
             writer.println("! Examples (remove ! in front of one to activate it):");
             writer.println("! minecraft:dark_forest > minecraft:cherry_grove");
-            writer.println("! minecraft:taiga > minecraft:desert 0.1");
             writer.println("! terralith:lavender_forest > aurorasdeco:lavender_plains");
             writer.println("! terralith:lavender_valley > aurorasdeco:lavender_plains");
             writer.println("! terralith:cave/infested_caves > minecraft:dripstone_caves");
             writer.println("! ");
-            writer.println("! To remove a biome, use 'null' as the target biome:");
-            writer.println("! minecraft:desert > null");
-            writer.println("! ");
-            writer.println("! For mass biome replacement, you can use biome tags:");
-            writer.println("! #minecraft:is_forest > minecraft:desert 0.5");
-            writer.println("! #minecraft:is_mountain > minecraft:badlands 0.35");
-            writer.println("! ");
-            writer.println("! For reference: 0.9 = 90%, 0.5 = 50%, 0.1 = 10%");
-            writer.println("! For full biome list, see https://minecraft.gamepedia.com/Biome/ID");
+            writer.println("! For full biome list, see https://minecraft.wiki/w/Biome#Biome_IDs");
         }
         catch (IOException e)
         {

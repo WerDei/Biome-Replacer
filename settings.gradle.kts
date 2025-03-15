@@ -1,5 +1,3 @@
-import dev.kikugie.stonecutter.StonecutterSettings
-
 pluginManagement {
 	repositories {
 		mavenCentral()
@@ -13,10 +11,10 @@ pluginManagement {
 }
 
 plugins {
-	id("dev.kikugie.stonecutter") version "0.4.4"
+	id("dev.kikugie.stonecutter") version "0.5.2"
 }
 
-extensions.configure<StonecutterSettings> {
+stonecutter {
 	kotlinController= true
 	centralScript = "build.gradle.kts"
 
@@ -37,17 +35,20 @@ extensions.configure<StonecutterSettings> {
 		// Unfortunately it crashes on 1.19.3, but that version is kinda irrelevant now so idk if its worth its own port
 		mc("1.19.2", listOf("fabric", "lexforge"))
 
+		// Codename Mammoth
+		// Works across 1.20-1.20.1 on both Forges
+		mc("1.20.1", listOf("lexforge"))
+
 		// Codename Elephant
-		// Works across 1.19.4 - 1.21.1 for Fabric, 1.20.5 - 1.21.1 for Neo, 1.20-1.20.1 for Forge
+		// Works across 1.19.4 - 1.21.1 for Fabric, 1.20.5 - 1.21.1 for Neo
 		// (neo had made some changes on 20.5, and I can't be bothered to make it load both on and before it)
 		mc("1.20.6", listOf("fabric", "neoforge"))
-		mc("1.20.1", listOf("lexforge"))
 
 		// Codename Minnow
 		// Works across 1.21.2 - 1.21.4
 		mc("1.21.4", listOf("fabric", "neoforge"))
 
-		vcsVersion("1.21.4-fabric")
+		vcsVersion = "1.21.4-fabric"
 	}
 	create(rootProject)
 }

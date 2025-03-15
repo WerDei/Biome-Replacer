@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 //? if >=1.19.4 {
-/*import net.minecraft.core.registries.Registries;
-*///?}
+import net.minecraft.core.registries.Registries;
+//?}
 
 
 public class BiomeReplacer
@@ -126,9 +126,9 @@ public class BiomeReplacer
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome ID: %s", id));
         //? if >=1.19.4
-        /*return ResourceKey.create(Registries.BIOME, resourceLocation);*/
+        return ResourceKey.create(Registries.BIOME, resourceLocation);
         //? if <1.19.4
-        return ResourceKey.create(Registry.BIOME_REGISTRY, resourceLocation);
+        /*return ResourceKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
     }
 
     private static TagKey<Biome> getBiomeTagKey(String id) throws Exception
@@ -137,9 +137,9 @@ public class BiomeReplacer
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome tag: %s", id));
         //? if >=1.19.4
-        /*return TagKey.create(Registries.BIOME, resourceLocation);*/
+        return TagKey.create(Registries.BIOME, resourceLocation);
         //? if <1.19.4
-        return TagKey.create(Registry.BIOME_REGISTRY, resourceLocation);
+        /*return TagKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
     }
 
     private static Holder<Biome> getBiomeHolder(String id, Registry<Biome> registry) throws Exception
@@ -150,9 +150,9 @@ public class BiomeReplacer
         var resourceKey = getBiomeResourceKey(id);
 
         //? if >=1.21.2
-        /*var holder = registry.get(resourceKey);*/
+        var holder = registry.get(resourceKey);
         //? if <1.21.2
-        var holder = registry.getHolder(resourceKey);
+        /*var holder = registry.getHolder(resourceKey);*/
 
         if (holder.isPresent()) return holder.get();
 
