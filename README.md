@@ -48,7 +48,7 @@ They can potentially damage your world, so be careful!
 ## Compatibility
 
 - **Works With:** Vanilla and datapack biomes (including Terralith)
-- **Limited Support:** TerraBlender, Biolith or Lithosphere biomes (use their native options instead)
+- **Limited Support:** TerraBlender or Biolith biomes (use their native options instead)
 - **Generally Compatible:** Works with most worldgen mods (report issues [here](https://github.com/WerDei/Biome-Replacer/issues))
 
 Note: Currently, if you install TerraBlender and try to replace a _vanilla_ biome, 
