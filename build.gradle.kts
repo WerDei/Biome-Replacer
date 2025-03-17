@@ -1,17 +1,23 @@
+import org.gradle.internal.extensions.stdlib.capitalized
+
 plugins {
 	id("dev.architectury.loom") version "1.7.+"
+	id("me.modmuss50.mod-publish-plugin")
 }
 
 class ModData {
 	val id = property("mod.id").toString()
 	val name = property("mod.name")
-	val version = "${property("mod.version")}-${property("mod.mc_codename")}"
+	val version = property("mod.version")
+	val versionWithCodename = "${property("mod.version")}-${property("mod.mc_codename")}"
 	val group = property("mod.group").toString()
 	val description = property("mod.description")
 	val source = property("mod.source")
 	val issues = property("mod.issues")
 	val license = property("mod.license").toString()
 	val modrinth = property("mod.modrinth")
+	val modrinthId = property("publish.modrinth")
+	val curseforgeId = property("publish.curseforge")
 }
 
 class Dependencies {
@@ -40,7 +46,7 @@ val mod = ModData()
 val deps = Dependencies()
 val loader = LoaderData()
 
-version = "${mod.version}-${loader.loader}"
+version = "${mod.versionWithCodename}-${loader.loader}"
 group = mod.group
 base { archivesName.set(mod.id.replace("_", "")) }
 
@@ -65,12 +71,9 @@ loom {
 
 repositories {
 	maven("https://maven.parchmentmc.org") // Parchment
-//	maven("https://maven.isxander.dev/releases") // YACL
-//	maven("https://thedarkcolour.github.io/KotlinForForge") // Kotlin for Forge - required by YACL
 	maven("https://maven.terraformersmc.com") // Mod Menu
 	maven("https://maven.nucleoid.xyz/") { name = "Nucleoid" } // Placeholder API - required by Mod Menu
 	maven("https://maven.neoforged.net/releases") // NeoForge
-	maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1") // DevAuth
 }
 
 dependencies {
@@ -87,24 +90,15 @@ dependencies {
 		}
 	})
 
-	if (!loader.isLexforge)
-		modRuntimeOnly("me.djtheredstoner:DevAuth-${loader.loader}:${deps.devauthVersion}")
-
 	if (loader.isFabric)
 	{
 		modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
 		modRuntimeOnly("com.terraformersmc:modmenu:${deps.modmenuVersion}")
 		modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
-//		if (mc.version == "1.21.3") modImplementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21.2-${loader.loader}")
-//		else if (mc.version == "1.21.1") modImplementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21-${loader.loader}")
-//		else modImplementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+${mc.version}-${loader.loader}")
 	}
 	else if (loader.isNeoforge)
 	{
 		"neoForge"("net.neoforged:neoforge:${findProperty("deps.neoforge")}")
-//		if (mc.version == "1.21.3") implementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21.2-${loader.loader}") {isTransitive = false}
-//		else if (mc.version == "1.21.1") implementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21-${loader.loader}") {isTransitive = false}
-//		else implementation("dev.isxander:yet-another-config-lib:${deps.yaclVersion}+1.21.2-${loader.loader}") {isTransitive = false}
 	}
 	else if (loader.isLexforge)
 	{
@@ -118,7 +112,7 @@ dependencies {
 
 java {
 	// I want codename Elephant builds on fabric to load before 1.20.5 too, so it's built for java 17
-	val java = if (stonecutter.compare(stonecutter.current.version, "1.20.5" ) < 0
+	val java = if (stonecutter.current.version < "1.20.5"
 		|| (stonecutter.current.version == "1.20.6" && loader.isFabric))
 		JavaVersion.VERSION_17 else JavaVersion.VERSION_21
 	sourceCompatibility = java
@@ -129,7 +123,7 @@ tasks.processResources {
 	val props = buildMap {
 		put("id", mod.id)
 		put("name", mod.name)
-		put("version", mod.version)
+		put("version", mod.versionWithCodename)
 		put("minecraft", mc.dep)
 		put("description", mod.description)
 		put("source", mod.source)
@@ -160,6 +154,30 @@ tasks.processResources {
 		filesMatching("pack.mcmeta") { expand(props) }
 		exclude("fabric.mod.json", "META-INF/neoforge.mods.toml")
 	}
+}
+
+publishMods {
+	file = project.tasks.remapJar.get().archiveFile
+	displayName = "${mod.version} ${mc.targets.first()}-${mc.targets.last()} ${loader.loader.capitalized()}"
+	changelog = rootProject.file("CHANGELOG.md").readText()
+	type = BETA
+
+	modLoaders.add(loader.loader)
+	if (loader.isFabric)
+		modLoaders.add("quilt")
+
+	modrinth {
+		projectId = property("publish.modrinth").toString()
+		accessToken = findProperty("modrinth_token").toString()
+		mc.targets.forEach(minecraftVersions::add)
+		projectDescription = providers.fileContents(layout.projectDirectory.file("README.md")).asText
+	}
+
+//	curseforge {
+//		projectId = property("publish.curseforge").toString()
+//		accessToken = findProperty("curseforge_token").toString()
+//		mc.targets.forEach(minecraftVersions::add)
+//	}
 }
 
 if (stonecutter.current.isActive) {

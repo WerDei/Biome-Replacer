@@ -32,16 +32,13 @@ stonecutter {
 
 		// Codename Toad
 		// Works across 1.18.2 - 1.19.2
-		// Unfortunately it crashes on 1.19.3, but that version is kinda irrelevant now so idk if its worth its own port
 		mc("1.19.2", listOf("fabric", "lexforge"))
 
-		// Codename Mammoth
-		// Works across 1.20-1.20.1 on both Forges
-		mc("1.20.1", listOf("lexforge"))
+		// Maybe a 1.19.3 port?..
 
-		// Codename Elephant
-		// Works across 1.19.4 - 1.21.1 for Fabric, 1.20.5 - 1.21.1 for Neo
-		// (neo had made some changes on 20.5, and I can't be bothered to make it load both on and before it)
+		// Codename Hippo
+		// Works across 1.19.4 - 1.21.1, with 1.20.5 being the point where we switch to Neoforge
+		mc("1.20.1", listOf("lexforge"))
 		mc("1.20.6", listOf("fabric", "neoforge"))
 
 		// Codename Minnow

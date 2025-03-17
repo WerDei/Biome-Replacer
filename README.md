@@ -5,16 +5,12 @@
 <div align="center">
   <img src="https://img.shields.io/modrinth/dt/biome-replacer?style=flat&logo=modrinth&logoColor=%2300AF5C&label=Modrinth&color=%2300AF5C&link=https%3A%2F%2Fmodrinth.com%2Fmod%2Fbiome-replacer" alt="Modrinth Downloads">
   <img src="https://img.shields.io/curseforge/dt/910274?style=flat&logo=CurseForge&logoColor=%23F16436&label=CurseForge&color=%23F16436&link=https%3A%2F%2Fwww.curseforge.com%2Fminecraft%2Fmc-mods%2Fbiome-replacer" alt="CurseForge Downloads">
-  <img src="https://img.shields.io/badge/MC-1.19+-green?style=flat&logo=minecraft&logoColor=white" alt="Minecraft Versions">
+  <img src="https://img.shields.io/badge/MC-1.18.2+-green?style=flat&logo=minecraft&logoColor=white" alt="Minecraft Versions">
   <img src="https://img.shields.io/badge/Side-Server-orange?style=flat" alt="Server Side">
   <img src="https://img.shields.io/github/license/WerDei/Biome-Replacer?style=flat&color=purple" alt="License">
 <a href="https://discord.gg/z3h4d3Ux3p" target="_blank">
     <img src="https://img.shields.io/discord/1206800378486726716?style=flat&logo=Discord&label=Unofficial%20Discord&color=%235765F2" alt="Discord">
 </a>
-</div>
-
-<div align="center">
-  <strong>Server-side mod for precise biome control</strong>
 </div>
 
 ## Overview
@@ -33,10 +29,10 @@ like colors, mob spawns, and vegetation.
 
 ## Features
 
-- **Simple Biome Swapping:** Replace biomes with an easy rule system
+- **Easy Configuration:** Simple properties file with intuitive syntax
+- **Negligible performance impact:** Runs only once, and does not slow down the generation
 - **Tag Support:** Replace entire biome categories at once
 - **Server-Side:** No client installation needed (unless you want to use it in singleplayer, of course!)
-- **Easy Config:** Simple properties file with intuitive syntax
 
 ### Experimental features
 These haven't been tested thoroughly yet, and can be changed or removed in future versions.
@@ -71,13 +67,14 @@ minecraft:dark_forest > minecraft:cherry_grove
 ```
 
 #### Tag-Based replacement
+Note: this does not work on 1.18.2
 ```
 #minecraft:is_forest > minecraft:desert
 ```
 
 #### Options
 ```
-# Disable chat notifications
+! Disable chat notifications
 muteChatInfo = true
 ```
 
