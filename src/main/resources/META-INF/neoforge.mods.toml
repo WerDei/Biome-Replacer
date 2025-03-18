@@ -10,7 +10,7 @@ displayName = "${name}"
 displayURL = "${modrinth}"
 authors = "werdei, LegendarySpy, Etos2"
 description = "${description}"
-logoFile = "icon.png"
+logoFile = "logo.png"
 
 [["dependencies.${id}"]]
 modId = "neoforge"

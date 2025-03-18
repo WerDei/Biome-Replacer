@@ -29,6 +29,7 @@ class Dependencies {
 
 class LoaderData {
 	val loader = loom.platform.get().name.lowercase()
+	val loaderShort = if (loader == "neoforge") "neo" else loader
 	val isFabric = loader == "fabric"
 	val isNeoforge = loader == "neoforge"
 	val isLexforge = loader == "forge"
@@ -46,7 +47,7 @@ val mod = ModData()
 val deps = Dependencies()
 val loader = LoaderData()
 
-version = "${mod.versionWithCodename}-${loader.loader}"
+version = "${mod.versionWithCodename}-${loader.loaderShort}"
 group = mod.group
 base { archivesName.set(mod.id.replace("_", "")) }
 
@@ -141,43 +142,42 @@ tasks.processResources {
 	if (loader.isFabric)
 	{
 		filesMatching("fabric.mod.json") { expand(props) }
-		exclude(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml", "pack.mcmeta"))
+		exclude(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml", "pack.mcmeta", "logo.png"))
 	}
 	else if (loader.isNeoforge)
 	{
 		filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
-		exclude("fabric.mod.json", "META-INF/mods.toml", "pack.mcmeta")
+		exclude("fabric.mod.json", "META-INF/mods.toml", "pack.mcmeta", "icon.png")
 	}
 	else if (loader.isLexforge)
 	{
 		filesMatching("META-INF/mods.toml") { expand(props) }
 		filesMatching("pack.mcmeta") { expand(props) }
-		exclude("fabric.mod.json", "META-INF/neoforge.mods.toml")
+		exclude("fabric.mod.json", "META-INF/neoforge.mods.toml", "icon.png")
 	}
 }
 
 publishMods {
 	file = project.tasks.remapJar.get().archiveFile
-	displayName = "${mod.version} ${mc.targets.first()}-${mc.targets.last()} ${loader.loader.capitalized()}"
+	displayName = "${mod.version} ${loader.loader.capitalized()} ${mc.targets.first()}-${mc.targets.last()}"
 	changelog = rootProject.file("CHANGELOG.md").readText()
 	type = BETA
 
 	modLoaders.add(loader.loader)
-	if (loader.isFabric)
-		modLoaders.add("quilt")
 
 	modrinth {
 		projectId = property("publish.modrinth").toString()
 		accessToken = findProperty("modrinth_token").toString()
 		mc.targets.forEach(minecraftVersions::add)
-		projectDescription = providers.fileContents(layout.projectDirectory.file("README.md")).asText
+		// Hm, project description is changed with every published version. So 6+ times in a row. Hopefully this isn't an issue?
+		projectDescription = rootProject.file("README.md").readText()
 	}
 
-//	curseforge {
-//		projectId = property("publish.curseforge").toString()
-//		accessToken = findProperty("curseforge_token").toString()
-//		mc.targets.forEach(minecraftVersions::add)
-//	}
+	curseforge {
+		projectId = property("publish.curseforge").toString()
+		accessToken = findProperty("curseforge_token").toString()
+		mc.targets.forEach(minecraftVersions::add)
+	}
 }
 
 if (stonecutter.current.isActive) {
