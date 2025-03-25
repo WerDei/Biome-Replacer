@@ -29,10 +29,10 @@ like colors, mob spawns, and vegetation.
 
 ## Features
 
-- **Easy Configuration:** Simple properties file with intuitive syntax
+- **Easy configuration:** Simple properties file with intuitive syntax
 - **Negligible performance impact:** Runs only once, and does not slow down the generation
-- **Tag Support:** Replace entire biome categories at once
-- **Server-Side:** No client installation needed (unless you want to use it in singleplayer, of course!)
+- **Tag support:** Replace entire biome categories at once
+- **Server-side:** No client installation needed (unless you want to use it in singleplayer, of course!)
 
 ### Experimental features
 These haven't been tested thoroughly yet, and can be changed or removed in future versions.
@@ -41,13 +41,13 @@ They can potentially damage your world, so be careful!
 - **Chance based replacement:** Replace any percentage of a biome
 
 
-## Compatibility
+## Caveats
 
-- **Works With:** Vanilla and datapack biomes (including Terralith)
-- **Limited Support:** TerraBlender or Biolith biomes (use their native options instead)
-- **Generally Compatible:** Works with most worldgen mods (report issues [here](https://github.com/WerDei/Biome-Replacer/issues))
+- **Works perfectly with:** Vanilla and datapack biomes (including Terralith)
+- **Terrain will NOT be changed:** Biome Replacer can't remove or create new rivers, oceans, mountains, etc.
+- **Cannot replace:** TerraBlender or Biolith biomes - you should use their native configs instead
 
-Note: Currently, if you install TerraBlender and try to replace a _vanilla_ biome, 
+Note: Currently there is a bug with TerraBlender. If you install it and try to replace a _vanilla_ biome, 
 it might sometimes still appear in the world. See [this issue](https://github.com/WerDei/Biome-Replacer/issues/21) for more information.  
 (Oh, and if you are a developer knowledgeable in TB's workings, we'd appreciate the help on fixing this!)
 
@@ -119,7 +119,7 @@ minecraft:dark_forest > minecraft:cherry_grove
 ```
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/WerDei/Biome-Replacer/omniversion/readme-files/example-5.png" alt="Two forest types replaced by Desert">
+  <img src="https://raw.githubusercontent.com/WerDei/Biome-Replacer/master/readme-files/example-5.png" alt="Two forest types replaced by Desert">
 </div>
 
 ### Adding mod compatibility
