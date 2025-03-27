@@ -1,5 +1,6 @@
 package net.werdei.biome_replacer.config;
 
+import net.werdei.biome_replacer.BiomeReplacer;
 import net.werdei.biome_replacer.Platform;
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +16,9 @@ public class Config
     public static final String FILE_NAME = "biome_replacer.properties";
     public static final String REMOVE_BIOME_KEYWORD = "null";
 
-    // Biome replacement rules
-    public static final Map<String, BiomeReplacement> rules = new HashMap<>(); // Direct biome replacements
-    public static final Map<String, List<BiomeReplacement>> tagRules = new HashMap<>(); // Tag-based biome replacements
+    public static final Map<String, BiomeReplacement> rules = new HashMap<>();
+    public static final Map<String, List<BiomeReplacement>> tagRules = new HashMap<>();
 
-    // Class to store replacement information along with probability
     public static class BiomeReplacement {
         public final String targetBiome;
         public final double probability; // 0.0 to 1.0
@@ -34,9 +33,6 @@ public class Config
         }
     }
 
-
-    //Loads and processes the config file, Clears existing rules and reloads them from the file.
-
     public static void reload()
     {
         File file = getOrCreateFile();
@@ -50,46 +46,38 @@ public class Config
             {
                 String line = reader.nextLine().trim();
 
-                // Skip comments and empty lines
-                // Leaving "# " here for backwards compatibility
                 if (line.isEmpty() || line.startsWith("!") || line.startsWith("# "))
                     continue;
 
-                // Skip configuration options with "="
                 if (line.contains("=")) {
                     continue;
                 }
 
-                // Handle biome replacement rules (old_biome > new_biome [probability])
                 String[] result = line.split(">", 2);
                 if (result.length == 2)
                 {
                     String oldBiome = result[0].trim();
                     String newBiomeWithProb = result[1].trim();
 
-                    // Split target biome and probability (if provided)
                     String[] biomeAndProb = newBiomeWithProb.split("\\s+", 2);
                     String newBiome = biomeAndProb[0].trim();
-                    double probability = 1.0; // Default to 100% replacement
+                    double probability = 1.0;
 
-                    // Parse probability if provided
                     if (biomeAndProb.length > 1) {
                         try {
                             probability = Double.parseDouble(biomeAndProb[1].trim());
                         } catch (NumberFormatException e) {
-                            System.err.println("Invalid probability format for rule: " + line);
+                            BiomeReplacer.logWarn("Invalid probability format for rule, using 1.0: " + line);
+                            // Keep probability = 1.0 as default
                         }
                     }
 
-                    // Create the biome replacement object
                     BiomeReplacement replacement = new BiomeReplacement(newBiome, probability);
 
-                    // Handle tag-based rules (e.g., #minecraft:is_forest)
                     if (oldBiome.startsWith("#")) {
-                        String tagName = oldBiome.substring(1); // Remove '#' prefix
+                        String tagName = oldBiome.substring(1);
                         tagRules.computeIfAbsent(tagName, k -> new ArrayList<>()).add(replacement);
                     } else {
-                        // Add direct biome replacement rule
                         rules.put(oldBiome, replacement);
                     }
                 }
@@ -101,14 +89,12 @@ public class Config
         }
     }
 
-     //Gets the config file or creates a new one if it doesn't exist.
     public static File getOrCreateFile()
     {
         var file = Platform.getConfigFile();
 
         if (file.exists()) return file;
 
-        // Create a new config file
         try (PrintWriter writer = new PrintWriter(file))
         {
             writer.println("! Put your rules here in the format:");
@@ -127,50 +113,5 @@ public class Config
             throw new RuntimeException("Failed to create Biome Replacer config file: " + e.getMessage(), e);
         }
         return file;
-    }
-
-    /**
-     * Gets the target biome for replacement, considering probability.
-     * Returns null if the biome should be removed or the probability check fails.
-     */
-    public static String getTargetBiome(String sourceBiome) {
-        // Check direct biome replacements
-        if (rules.containsKey(sourceBiome)) {
-            BiomeReplacement replacement = rules.get(sourceBiome);
-
-            // Check if this replacement should occur based on probability
-            if (Math.random() <= replacement.probability) {
-                return REMOVE_BIOME_KEYWORD.equals(replacement.targetBiome) ? null : replacement.targetBiome;
-            }
-            return sourceBiome; // Keep original if probability check fails
-        }
-
-        return sourceBiome; // No replacement rule found
-    }
-
-    /**
-     * Checks if a biome belongs to a specific tag and returns a replacement if applicable.
-     * Returns null if no tag match is found or if probability check fails.
-     */
-    public static String getTagBasedReplacement(String sourceBiome, List<String> biomeTags) {
-        if (biomeTags == null || biomeTags.isEmpty()) {
-            return null;
-        }
-
-        // Check each tag the biome belongs to
-        for (String tag : biomeTags) {
-            List<BiomeReplacement> replacements = tagRules.get(tag);
-
-            if (replacements != null && !replacements.isEmpty()) {
-                // Use the first matching tag rule that passes the probability check
-                for (BiomeReplacement replacement : replacements) {
-                    if (Math.random() <= replacement.probability) {
-                        return REMOVE_BIOME_KEYWORD.equals(replacement.targetBiome) ? null : replacement.targetBiome;
-                    }
-                }
-            }
-        }
-
-        return null; // No tag match or all probability checks failed
     }
 }
