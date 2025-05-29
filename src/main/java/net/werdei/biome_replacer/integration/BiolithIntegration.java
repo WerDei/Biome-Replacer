@@ -108,17 +108,19 @@ public class BiolithIntegration {
         int convertedRules = 0;
         
         // Convert direct biome replacements
-        for (Map.Entry<String, Config.BiomeReplacement> entry : Config.rules.entrySet()) {
+        for (Map.Entry<String, List<Config.BiomeReplacement>> entry : Config.rules.entrySet()) {
             String sourceBiome = entry.getKey();
-            Config.BiomeReplacement replacement = entry.getValue();
+            List<Config.BiomeReplacement> replacements = entry.getValue();
             
             try {
-                if (convertBiomeReplacement(sourceBiome, replacement, biomeRegistry)) {
-                    convertedRules++;
+                for (Config.BiomeReplacement replacement : replacements) {
+                    if (convertBiomeReplacement(sourceBiome, replacement, biomeRegistry)) {
+                        convertedRules++;
+                    }
                 }
             } catch (Exception e) {
-                BiomeReplacer.logWarn(String.format("Failed to convert rule \"%s > %s\" for Biolith: %s", 
-                    sourceBiome, replacement.targetBiome, e.getMessage()));
+                BiomeReplacer.logWarn(String.format("Failed to convert rules for biome \"%s\" for Biolith: %s", 
+                    sourceBiome, e.getMessage()));
             }
         }
         

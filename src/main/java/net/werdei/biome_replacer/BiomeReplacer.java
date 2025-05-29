@@ -26,10 +26,9 @@ public class BiomeReplacer
 {
     private static final Logger LOGGER = LogManager.getLogger(BiomeReplacer.class);
     private static final String LOG_PREFIX = "[BiomeReplacer] ";
-    private static final Random RANDOM = new Random();
-    private static Map<ResourceKey<Biome>, List<BiomeReplacementEntry>> replacementRules;
-    private static Map<TagKey<Biome>, List<BiomeReplacementEntry>> tagReplacementRules;
-    private static boolean usingBiolith = false;
+    private static volatile Map<ResourceKey<Biome>, List<BiomeReplacementEntry>> replacementRules;
+    private static volatile Map<TagKey<Biome>, List<BiomeReplacementEntry>> tagReplacementRules;
+    private static volatile boolean usingBiolith = false;
 
     // Class to store replacement information along with probability
     private static class BiomeReplacementEntry {
@@ -70,19 +69,28 @@ public class BiomeReplacer
         log("Using direct biome replacement system (Biolith not available or integration failed).");
 
         // Process direct biome replacements
-        for (Map.Entry<String, Config.BiomeReplacement> entry : Config.rules.entrySet()) {
+        for (Map.Entry<String, List<Config.BiomeReplacement>> entry : Config.rules.entrySet()) {
             String oldBiomeId = entry.getKey();
-            Config.BiomeReplacement replacement = entry.getValue();
+            List<Config.BiomeReplacement> replacements = entry.getValue();
 
             try {
                 ResourceKey<Biome> oldBiome = getBiomeResourceKey(oldBiomeId);
-                Holder<Biome> newBiome = getBiomeHolder(replacement.targetBiome, biomeRegistry);
+                
+                for (Config.BiomeReplacement replacement : replacements) {
+                    Holder<Biome> newBiome = getBiomeHolder(replacement.targetBiome, biomeRegistry);
 
-                // Add to replacement rules with probability
-                replacementRules.computeIfAbsent(oldBiome, k -> new ArrayList<>())
-                        .add(new BiomeReplacementEntry(newBiome, replacement.probability));
+                    // Skip null biomes (removal rules) for direct replacement system - they're only for Biolith
+                    if (newBiome == null) {
+                        logWarn(String.format("Biome removal rule for \"%s\" skipped - removal only supported with Biolith integration", oldBiomeId));
+                        continue;
+                    }
+
+                    // Add to replacement rules with probability
+                    replacementRules.computeIfAbsent(oldBiome, k -> new ArrayList<>())
+                            .add(new BiomeReplacementEntry(newBiome, replacement.probability));
+                }
             } catch (Exception e) {
-                logWarn(String.format("Ignoring rule \"%s > %s\" - %s", oldBiomeId, replacement.targetBiome, e.getMessage()));
+                logWarn(String.format("Ignoring rules for biome \"%s\" - %s", oldBiomeId, e.getMessage()));
             }
         }
 
@@ -96,6 +104,12 @@ public class BiomeReplacer
 
                 for (Config.BiomeReplacement replacement : replacements) {
                     Holder<Biome> newBiome = getBiomeHolder(replacement.targetBiome, biomeRegistry);
+
+                    // Skip null biomes (removal rules) for direct replacement system - they're only for Biolith
+                    if (newBiome == null) {
+                        logWarn(String.format("Biome removal rule for tag \"#%s\" skipped - removal only supported with Biolith integration", tagId));
+                        continue;
+                    }
 
                     // Add to tag replacement rules with probability
                     tagReplacementRules.computeIfAbsent(tagKey, k -> new ArrayList<>())
@@ -116,27 +130,16 @@ public class BiomeReplacer
     }
 
     private static int countDirectRules() {
-        int count = 0;
-        for (List<BiomeReplacementEntry> entries : replacementRules.values()) {
-            count += entries.size();
-        }
-        return count;
+        return replacementRules.values().stream().mapToInt(List::size).sum();
     }
 
     private static int countTagRules() {
-        int count = 0;
-        for (List<BiomeReplacementEntry> entries : tagReplacementRules.values()) {
-            count += entries.size();
-        }
-        return count;
+        return tagReplacementRules.values().stream().mapToInt(List::size).sum();
     }
 
     private static int countConfigRules() {
-        int count = Config.rules.size();
-        for (List<Config.BiomeReplacement> entries : Config.tagRules.values()) {
-            count += entries.size();
-        }
-        return count;
+        return Config.rules.values().stream().mapToInt(List::size).sum() +
+               Config.tagRules.values().stream().mapToInt(List::size).sum();
     }
 
     private static ResourceKey<Biome> getBiomeResourceKey(String id) throws Exception
@@ -196,28 +199,109 @@ public class BiomeReplacer
 
         // Check for specific biome replacement
         ResourceKey<Biome> key = original.unwrapKey().orElse(null);
-        if (key != null && replacementRules.containsKey(key)) {
+        if (key != null) {
             List<BiomeReplacementEntry> candidates = replacementRules.get(key);
-            for (BiomeReplacementEntry entry : candidates) {
-                if (RANDOM.nextDouble() <= entry.probability) {
-                    return entry.targetBiome;
-                }
+            if (candidates != null) {
+                return selectReplacementFromCandidates(candidates, original);
             }
         }
 
         // Check for tag-based replacement
         for (Map.Entry<TagKey<Biome>, List<BiomeReplacementEntry>> entry : tagReplacementRules.entrySet()) {
             if (original.is(entry.getKey())) {
-                List<BiomeReplacementEntry> candidates = entry.getValue();
-                for (BiomeReplacementEntry candidate : candidates) {
-                    if (RANDOM.nextDouble() <= candidate.probability) {
-                        return candidate.targetBiome;
-                    }
-                }
+                return selectReplacementFromCandidates(entry.getValue(), original);
             }
         }
 
         return original;
+    }
+
+    /**
+     * Correctly handles probability distribution for multiple replacement candidates.
+     * Each candidate gets its specified probability independently.
+     * Uses deterministic randomness based on biome identity and rule configuration for consistent world generation.
+     */
+    private static Holder<Biome> selectReplacementFromCandidates(List<BiomeReplacementEntry> candidates, Holder<Biome> original) {
+        // Create deterministic randomness based on the biome's identity and config content hash
+        // This ensures different configs produce different results while maintaining determinism within a config
+        long biomeHash = original.unwrapKey().map(key -> key.location().toString().hashCode()).orElse(0);
+        long configHash = getConfigContentHash();
+        Random biomeRandom = new Random(biomeHash ^ configHash);
+        
+        // Fast path for single candidate (most common case)
+        if (candidates.size() == 1) {
+            BiomeReplacementEntry entry = candidates.get(0);
+            // Defensive null check - should never happen due to filtering above, but be safe
+            if (entry.targetBiome == null) {
+                logWarn("Encountered null target biome in replacement entry - this should not happen");
+                return original;
+            }
+            return biomeRandom.nextDouble() <= entry.probability ? entry.targetBiome : original;
+        }
+        
+        // For multiple candidates, collect winners efficiently
+        List<BiomeReplacementEntry> winners = null; // Lazy initialization
+        
+        for (BiomeReplacementEntry entry : candidates) {
+            // Defensive null check - should never happen due to filtering above, but be safe
+            if (entry.targetBiome == null) {
+                logWarn("Encountered null target biome in replacement entry - this should not happen");
+                continue;
+            }
+            
+            if (biomeRandom.nextDouble() <= entry.probability) {
+                if (winners == null) {
+                    winners = new ArrayList<>(candidates.size()); // Size hint for better performance
+                }
+                winners.add(entry);
+            }
+        }
+        
+        // If no winners, return original
+        if (winners == null || winners.isEmpty()) {
+            return original;
+        }
+        
+        // If single winner, return directly
+        if (winners.size() == 1) {
+            return winners.get(0).targetBiome;
+        }
+        
+        // Multiple winners: randomly select one
+        return winners.get(biomeRandom.nextInt(winners.size())).targetBiome;
+    }
+
+    /**
+     * Generate a stable hash based on the actual configuration content
+     * to ensure consistent randomness across different runs
+     */
+    private static long getConfigContentHash() {
+        if (replacementRules == null || tagReplacementRules == null) {
+            return 0;
+        }
+        
+        long hash = 1;
+        // Hash direct rules
+        for (Map.Entry<ResourceKey<Biome>, List<BiomeReplacementEntry>> entry : replacementRules.entrySet()) {
+            hash = hash * 31 + entry.getKey().location().toString().hashCode();
+            for (BiomeReplacementEntry replacement : entry.getValue()) {
+                hash = hash * 31 + replacement.targetBiome.unwrapKey()
+                    .map(key -> key.location().toString().hashCode()).orElse(0);
+                hash = hash * 31 + Double.hashCode(replacement.probability);
+            }
+        }
+        
+        // Hash tag rules
+        for (Map.Entry<TagKey<Biome>, List<BiomeReplacementEntry>> entry : tagReplacementRules.entrySet()) {
+            hash = hash * 31 + entry.getKey().location().toString().hashCode();
+            for (BiomeReplacementEntry replacement : entry.getValue()) {
+                hash = hash * 31 + replacement.targetBiome.unwrapKey()
+                    .map(key -> key.location().toString().hashCode()).orElse(0);
+                hash = hash * 31 + Double.hashCode(replacement.probability);
+            }
+        }
+        
+        return hash;
     }
 
     public static boolean noReplacements()
@@ -244,5 +328,4 @@ public class BiomeReplacer
     {
         LOGGER.warn(LOG_PREFIX + "{}", message);
     }
-
 }
