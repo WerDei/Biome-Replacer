@@ -72,7 +72,7 @@ loom {
 
 repositories {
 	maven("https://maven.parchmentmc.org") // Parchment
-	maven("https://maven.terraformersmc.com") // Mod Menu
+	maven("https://maven.terraformersmc.com") // Mod Menu, Biolith
 	maven("https://maven.nucleoid.xyz/") { name = "Nucleoid" } // Placeholder API - required by Mod Menu
 	maven("https://maven.neoforged.net/releases") // NeoForge
 }
@@ -86,28 +86,45 @@ dependencies {
 		officialMojangMappings()
 
 		// Parchment mappings (it adds parameter mappings & javadoc)
+		// Skip Parchment for 1.20.1 Forge due to mapping compatibility issues
 		optionalProp("deps.parchment_version") {
-			parchment("org.parchmentmc.data:parchment-${mc.version}:$it@zip")
+			if (mc.version == "1.20.1" && loader.isLexforge) {
+				// Skip Parchment for 1.20.1 Forge to avoid obfuscation mapping conflicts
+			} else {
+				parchment("org.parchmentmc.data:parchment-${mc.version}:$it@zip")
+			}
 		}
 	})
 
-	if (loader.isFabric)
-	{
-		modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-		modRuntimeOnly("com.terraformersmc:modmenu:${deps.modmenuVersion}")
-		modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
+	// Biolith integration (optional dependency)
+	optionalProp("deps.biolith_version") {
+		when {
+			loader.isFabric -> modImplementation("com.terraformersmc:biolith-fabric:$it")
+			loader.isNeoforge -> modImplementation("com.terraformersmc:biolith-neoforge:$it")
+			loader.isLexforge -> modImplementation("com.terraformersmc:biolith-forge:$it")
+			else -> Unit // No Biolith dependency for unknown loaders
+		}
 	}
-	else if (loader.isNeoforge)
-	{
-		"neoForge"("net.neoforged:neoforge:${findProperty("deps.neoforge")}")
-	}
-	else if (loader.isLexforge)
-	{
-		"forge"("net.minecraftforge:forge:${mc.version}-${findProperty("deps.forge")}")
-//		"io.github.llamalad7:mixinextras-forge:${mod.dep("mixin_extras")}".let {
-//			implementation(it)
-//			include(it)
-//		}
+
+	when {
+		loader.isFabric -> {
+			modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+			modRuntimeOnly("com.terraformersmc:modmenu:${deps.modmenuVersion}")
+			modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
+		}
+		loader.isNeoforge -> {
+			"neoForge"("net.neoforged:neoforge:${findProperty("deps.neoforge")}")
+		}
+		loader.isLexforge -> {
+			"forge"("net.minecraftforge:forge:${mc.version}-${findProperty("deps.forge")}")
+//			"io.github.llamalad7:mixinextras-forge:${mod.dep("mixin_extras")}".let {
+//				implementation(it)
+//				include(it)
+//			}
+		}
+		else -> {
+			throw GradleException("Unknown loader: ${loader.loader}")
+		}
 	}
 }
 
