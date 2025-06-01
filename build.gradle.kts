@@ -94,9 +94,9 @@ dependencies {
 	// Biolith integration (optional dependency)
 	optionalProp("deps.biolith_version") {
 		when {
-			loader.isFabric -> modImplementation("com.terraformersmc:biolith-fabric:$it")
-			loader.isNeoforge -> modImplementation("com.terraformersmc:biolith-neoforge:$it")
-			loader.isLexforge -> modImplementation("com.terraformersmc:biolith-forge:$it")
+			loader.isFabric -> modCompileOnly("com.terraformersmc:biolith-fabric:$it")
+			loader.isNeoforge -> modCompileOnly("com.terraformersmc:biolith-neoforge:$it")
+			loader.isLexforge -> modCompileOnly("com.terraformersmc:biolith-forge:$it")
 			else -> Unit // No Biolith dependency for unknown loaders
 		}
 	}

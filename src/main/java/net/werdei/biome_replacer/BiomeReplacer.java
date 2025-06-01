@@ -16,19 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 //? if >=1.20.2 {
-/*import net.minecraft.core.registries.Registries;*/
+import net.minecraft.core.registries.Registries;
 //?} else if lexforge {
-import net.minecraftforge.registries.ForgeRegistries;
-//?}
+/*import net.minecraftforge.registries.ForgeRegistries;
+*///?}
 
 
 public class BiomeReplacer
 {
     private static final Logger LOGGER = LogManager.getLogger(BiomeReplacer.class);
     private static final String LOG_PREFIX = "[BiomeReplacer] ";
-    private static volatile Map<ResourceKey<Biome>, List<BiomeReplacementEntry>> replacementRules;
-    private static volatile Map<TagKey<Biome>, List<BiomeReplacementEntry>> tagReplacementRules;
-    private static volatile boolean usingBiolith = false;
+    private static Map<ResourceKey<Biome>, List<BiomeReplacementEntry>> replacementRules;
+    private static Map<TagKey<Biome>, List<BiomeReplacementEntry>> tagReplacementRules;
+    private static boolean usingBiolith = false;
 
     // Class to store replacement information along with probability
     private static class BiomeReplacementEntry {
@@ -44,31 +44,26 @@ public class BiomeReplacer
     public static void initialize()
     {
         Config.getOrCreateFile();
+        usingBiolith = Platform.isModLoaded("biolith");
     }
 
     public static void prepareReplacementRules(Registry<Biome> biomeRegistry)
     {
-        // Load config first, regardless of whether we use Biolith or not
         Config.reload();
         
-        // First, try to use Biolith if available
-        if (BiolithIntegration.initializeBiolithIntegration(biomeRegistry)) {
-            usingBiolith = true;
-            // Clear our own replacement rules since Biolith will handle everything
-            replacementRules = new HashMap<>();
-            tagReplacementRules = new HashMap<>();
+        if (usingBiolith)
+        {
+            BiolithIntegration.initialize(biomeRegistry);
             log("Biome replacement will be handled by Biolith. Direct mixin replacement disabled.");
             return;
         }
-
-        // Fall back to our own replacement system
-        usingBiolith = false;
+        
         replacementRules = new HashMap<>();
         tagReplacementRules = new HashMap<>();
 
-        log("Using direct biome replacement system (Biolith not available or integration failed).");
+        log("Using Built-in biome replacement system");
 
-        // Process direct biome replacements
+        // simple biome replacements
         for (Map.Entry<String, List<Config.BiomeReplacement>> entry : Config.rules.entrySet()) {
             String oldBiomeId = entry.getKey();
             List<Config.BiomeReplacement> replacements = entry.getValue();
@@ -94,7 +89,7 @@ public class BiomeReplacer
             }
         }
 
-        // Process tag-based replacements
+        // tag-based replacements
         for (Map.Entry<String, List<Config.BiomeReplacement>> entry : Config.tagRules.entrySet()) {
             String tagId = entry.getKey();
             List<Config.BiomeReplacement> replacements = entry.getValue();
@@ -148,10 +143,10 @@ public class BiomeReplacer
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome ID: %s", id));
         //? if >=1.20.2 {
-        /*return ResourceKey.create(Registries.BIOME, resourceLocation);*/
+        return ResourceKey.create(Registries.BIOME, resourceLocation);
         //?} else if lexforge {
-        return ResourceKey.create(ForgeRegistries.BIOMES.getRegistryKey(), resourceLocation);
-        //?} else {
+        /*return ResourceKey.create(ForgeRegistries.BIOMES.getRegistryKey(), resourceLocation);
+        *///?} else {
         /*return ResourceKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
         //?}
     }
@@ -162,10 +157,10 @@ public class BiomeReplacer
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome tag: %s", id));
         //? if >=1.20.2 {
-        /*return TagKey.create(Registries.BIOME, resourceLocation);*/
+        return TagKey.create(Registries.BIOME, resourceLocation);
         //?} else if lexforge {
-        return TagKey.create(ForgeRegistries.BIOMES.getRegistryKey(), resourceLocation);
-        //?} else {
+        /*return TagKey.create(ForgeRegistries.BIOMES.getRegistryKey(), resourceLocation);
+        *///?} else {
         /*return TagKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
         //?}
     }
@@ -178,12 +173,12 @@ public class BiomeReplacer
         var resourceKey = getBiomeResourceKey(id);
 
         //? if >=1.21.2 {
-        /*var holder = registry.get(resourceKey);
+        var holder = registry.get(resourceKey);
         if (holder.isPresent()) return holder.get();
-        *///?} else {
-        var holder = registry.getHolder(resourceKey);
+        //?} else {
+        /*var holder = registry.getHolder(resourceKey);
         if (holder.isPresent()) return holder.get();
-        //?}
+        *///?}
 
         throw new Exception(String.format("Biome %s is not registered", id));
     }
@@ -195,7 +190,7 @@ public class BiomeReplacer
             return original;
         }
 
-        if (noReplacements()) return original;
+        if (skipBuiltInReplacer()) return original;
 
         // Check for specific biome replacement
         ResourceKey<Biome> key = original.unwrapKey().orElse(null);
@@ -304,19 +299,9 @@ public class BiomeReplacer
         return hash;
     }
 
-    public static boolean noReplacements()
+    public static boolean skipBuiltInReplacer()
     {
-        // If using Biolith, we consider our system to have "no replacements" 
-        // since Biolith handles them
-        if (usingBiolith) {
-            return true;
-        }
-        return replacementRules.isEmpty() && tagReplacementRules.isEmpty();
-    }
-
-    public static boolean isUsingBiolith()
-    {
-        return usingBiolith;
+        return usingBiolith || (replacementRules.isEmpty() && tagReplacementRules.isEmpty());
     }
 
     public static void log(String message)

@@ -3,9 +3,6 @@ package net.werdei.biome_replacer.mixin;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.packs.resources.CloseableResourceManager;
@@ -29,10 +26,10 @@ import net.minecraft.server.RegistryLayer;
 import com.mojang.datafixers.util.Either;
 //?}
 //? if >=1.20.2 {
-/*import net.minecraft.core.registries.Registries;*/
+import net.minecraft.core.registries.Registries;
 //?} else if lexforge {
-import net.minecraftforge.registries.ForgeRegistries;
-//?}
+/*import net.minecraftforge.registries.ForgeRegistries;
+*///?}
 
 @Mixin(WorldStem.class)
 public abstract class WorldStemMixin
@@ -44,26 +41,26 @@ public abstract class WorldStemMixin
         try {
             var registryAccess = layeredRegistryAccess.compositeAccess();
             //? if >=1.21.2 {
-            /*doReplacement(registryAccess.lookupOrThrow(Registries.BIOME), registryAccess.lookupOrThrow(Registries.LEVEL_STEM));*/
+            doReplacement(registryAccess.lookupOrThrow(Registries.BIOME), registryAccess.lookupOrThrow(Registries.LEVEL_STEM));
             //?} else if >=1.20.2 {
             /*doReplacement(registryAccess.registryOrThrow(Registries.BIOME), registryAccess.registryOrThrow(Registries.LEVEL_STEM));*/
             //?} else if lexforge {
-            Registry<Biome> biomeRegistry = registryAccess.registryOrThrow(ForgeRegistries.BIOMES.getRegistryKey());
+            /*Registry<Biome> biomeRegistry = registryAccess.registryOrThrow(ForgeRegistries.BIOMES.getRegistryKey());
             
             // Use the correct built-in registry key for level stems in 1.20.1
             try {
                 //? if >=1.20.2 {
-                /*Registry<LevelStem> levelStemRegistry = registryAccess.registryOrThrow(Registries.LEVEL_STEM);*/
+                Registry<LevelStem> levelStemRegistry = registryAccess.registryOrThrow(Registries.LEVEL_STEM);
                 //?} else {
-                // For 1.20.1, use the correct built-in registry
+                /^// For 1.20.1, use the correct built-in registry
                 Registry<LevelStem> levelStemRegistry = registryAccess.registryOrThrow(net.minecraft.core.registries.Registries.LEVEL_STEM);
-                //?}
+                ^///?}
                 doReplacement(biomeRegistry, levelStemRegistry);
             } catch (Exception e) {
                 BiomeReplacer.logWarn("Level stem registry not available, skipping biome replacement for now: " + e.getMessage());
                 BiomeReplacer.logWarn("This may be normal during early world creation phases. Biome replacement may still work through Biolith integration.");
             }
-            //?} else {
+            *///?} else {
             /*doReplacement(biomeRegistry, worldData.worldGenSettings().dimensions());*/
             //?}
         } catch (Exception e) {
@@ -75,7 +72,6 @@ public abstract class WorldStemMixin
     /*@Inject(method = "<init>", at = @At("TAIL"))
     private void onStemCreated(CloseableResourceManager closeableResourceManager, ReloadableServerResources reloadableServerResources, RegistryAccess.Frozen frozen, WorldData worldData, CallbackInfo ci)
     {
-        // In 1.19.2, dimension registry from WorldData is used instead
         Registry<LevelStem> dimensionRegistry = worldData.worldGenSettings().dimensions();
         Registry<Biome> biomeRegistry = frozen.registryOrThrow(Registry.BIOME_REGISTRY);
         doReplacement(biomeRegistry, dimensionRegistry);
@@ -87,14 +83,7 @@ public abstract class WorldStemMixin
     {
         try {
             BiomeReplacer.prepareReplacementRules(biomeRegistry);
-            
-            // If Biolith is handling replacements, skip our direct manipulation
-            if (BiomeReplacer.isUsingBiolith()) {
-                BiomeReplacer.log("Skipping direct biome manipulation - Biolith is handling biome replacement");
-                return;
-            }
-            
-            if (BiomeReplacer.noReplacements()) return;
+            if (BiomeReplacer.skipBuiltInReplacer()) return;
 
             for (var entry : stemRegistry.entrySet())
             {
