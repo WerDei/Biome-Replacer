@@ -16,14 +16,10 @@ class ModData {
 	val issues = property("mod.issues")
 	val license = property("mod.license").toString()
 	val modrinth = property("mod.modrinth")
-	val modrinthId = property("publish.modrinth")
-	val curseforgeId = property("publish.curseforge")
 }
 
 class Dependencies {
 	val modmenuVersion = property("deps.modmenu_version")
-	val yaclVersion = property("deps.yacl_version")
-	val devauthVersion = property("deps.devauth_version")
 	val fapiVersion = property("deps.fabric_api")
 }
 
@@ -86,7 +82,6 @@ dependencies {
 		officialMojangMappings()
 
 		// Parchment mappings (it adds parameter mappings & javadoc)
-		// Skip Parchment for 1.20.1 Forge due to mapping compatibility issues
 		optionalProp("deps.parchment_version") {
 			if (mc.version == "1.20.1" && loader.isLexforge) {
 				// Skip Parchment for 1.20.1 Forge to avoid obfuscation mapping conflicts
@@ -199,8 +194,29 @@ publishMods {
 
 if (stonecutter.current.isActive) {
 	rootProject.tasks.register("buildActive") {
-		group = "project"
+		group = "stonecutter"
 		dependsOn(tasks.named("build"))
+	}
+}
+
+if (stonecutter.current.isActive) {
+	rootProject.tasks.register("runActive") {
+		group = "stonecutter"
+		dependsOn(tasks.named("runClient"))
+	}
+}
+
+if (stonecutter.current.isActive) {
+	rootProject.tasks.register("runActiveServer") {
+		group = "stonecutter"
+		dependsOn(tasks.named("runServer"))
+	}
+}
+
+if (stonecutter.current.isActive) {
+	rootProject.tasks.register("publishActiveVersion") {
+		group = "publishing"
+		dependsOn(tasks.named("publishMods"))
 	}
 }
 
