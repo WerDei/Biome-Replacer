@@ -1,4 +1,4 @@
-package net.werdei.biome_replacer.integration;
+package net.werdei.biome_replacer.replacer;
 
 import com.terraformersmc.biolith.api.biome.BiomePlacement;
 import net.minecraft.core.Holder;
@@ -7,27 +7,28 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
-import net.werdei.biome_replacer.BiomeReplacer;
 import net.werdei.biome_replacer.config.Config;
-
 import java.util.List;
 import java.util.Map;
+import static net.werdei.biome_replacer.BiomeReplacer.*;
 
 //? if >=1.20.2 {
 import net.minecraft.core.registries.Registries;
+
 //?} else if lexforge {
 /*import net.minecraftforge.registries.ForgeRegistries;
 *///?}
 
-public class BiolithIntegration
+public class BiolithReplacer
 {
+    
     /**
      * Convert our config rules to Biolith API calls
-     * This uses Biolith's programmatic API to register biome replacements
      */
-    public static void initialize(Registry<Biome> biomeRegistry) {
-        if (Config.rules.isEmpty() && Config.tagRules.isEmpty()) {
-            BiomeReplacer.log("No replacement rules to convert for Biolith.");
+    public static void registerRules(Registry<Biome> biomeRegistry)
+    {
+        if (Config.hasNoRules()) {
+            log("No replacement rules to convert for Biolith.");
             return;
         }
         
@@ -45,7 +46,7 @@ public class BiolithIntegration
                     }
                 }
             } catch (Exception e) {
-                BiomeReplacer.logWarn(String.format("Failed to convert rules for biome \"%s\" for Biolith: %s", 
+                logWarn(String.format("Failed to convert rules for biome \"%s\" for Biolith: %s",
                     sourceBiome, e.getMessage()));
             }
         }
@@ -60,12 +61,12 @@ public class BiolithIntegration
                     convertedRules += replacements.size();
                 }
             } catch (Exception e) {
-                BiomeReplacer.logWarn(String.format("Failed to convert tag rule \"#%s\" for Biolith: %s", 
+                logWarn(String.format("Failed to convert tag rule \"#%s\" for Biolith: %s",
                     tagId, e.getMessage()));
             }
         }
         
-        BiomeReplacer.log(String.format("Successfully converted %d replacement rules for Biolith integration.", convertedRules));
+        log(String.format("Successfully converted %d replacement rules for Biolith integration.", convertedRules));
     }
     
     /**
@@ -78,12 +79,12 @@ public class BiolithIntegration
             
             if (replacement.targetBiome.equals(Config.REMOVE_BIOME_KEYWORD)) {
                 BiomePlacement.removeOverworld(sourceKey);
-                BiomeReplacer.log(String.format("Registered biome removal with Biolith API: %s", sourceBiome));
+                debug(String.format("Registered biome removal with Biolith API: %s", sourceBiome));
             } else {
                 // For replacement, validate target biome and register with Biolith
                 ResourceKey<Biome> targetKey = getBiomeResourceKey(replacement.targetBiome);
                 BiomePlacement.replaceOverworld(sourceKey, targetKey, replacement.probability);
-                BiomeReplacer.log(String.format("Registered biome replacement with Biolith API: %s -> %s (%.1f%% chance)", 
+                debug(String.format("Registered biome replacement with Biolith API: %s -> %s (%.1f%% chance)",
                     sourceBiome, replacement.targetBiome, replacement.probability * 100));
             }
             return true;
@@ -108,12 +109,12 @@ public class BiolithIntegration
                 for (Config.BiomeReplacement replacement : replacements) {
                     if (replacement.targetBiome.equals(Config.REMOVE_BIOME_KEYWORD)) {
                         BiomePlacement.removeOverworld(biomeKey);
-                        BiomeReplacer.log(String.format("Registered tag-based biome removal with Biolith API: %s (from tag #%s)",
+                        debug(String.format("Registered tag-based biome removal with Biolith API: %s (from tag #%s)",
                             biomeKey.location(), tagId));
                     } else {
                         ResourceKey<Biome> targetKey = getBiomeResourceKey(replacement.targetBiome);
                         BiomePlacement.replaceOverworld(biomeKey, targetKey, replacement.probability);
-                        BiomeReplacer.log(String.format("Registered tag-based biome replacement with Biolith API: %s -> %s (%.1f%% chance, from tag #%s)",
+                        debug(String.format("Registered tag-based biome replacement with Biolith API: %s -> %s (%.1f%% chance, from tag #%s)",
                             biomeKey.location(), replacement.targetBiome, replacement.probability * 100, tagId));
                     }
                 }

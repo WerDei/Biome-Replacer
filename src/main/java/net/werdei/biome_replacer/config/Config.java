@@ -46,10 +46,13 @@ public class Config
             {
                 String line = reader.nextLine().trim();
 
+                // Comments. Keeping "# " for backwards compatibility with old BR versions.
                 if (line.isEmpty() || line.startsWith("!") || line.startsWith("# "))
                     continue;
 
-                if (line.contains("=")) {
+                // Options. Might be used later.
+                if (line.contains("="))
+                {
                     continue;
                 }
 
@@ -67,8 +70,8 @@ public class Config
                         try {
                             probability = Double.parseDouble(biomeAndProb[1].trim());
                             if (probability < 0.0 || probability > 1.0) {
-                                BiomeReplacer.logWarn("Probability must be between 0.0 and 1.0, got " + probability + " for rule: " + line + ". Clamping to valid range.");
-                                // Clamping will be done in BiomeReplacement constructor
+                                BiomeReplacer.logWarn("Probability will be clamped be between 0.0 and 1.0 in rule: " + line);
+                                
                             }
                         } catch (NumberFormatException e) {
                             BiomeReplacer.logWarn("Invalid probability format '" + biomeAndProb[1].trim() + "' for rule: " + line + ". Using 1.0 (100% chance). Expected format: old_biome > new_biome probability");
@@ -127,5 +130,14 @@ public class Config
             throw new RuntimeException("Failed to create Biome Replacer config file: " + e.getMessage(), e);
         }
         return file;
+    }
+    
+    public static int getRuleCount() {
+        return rules.values().stream().mapToInt(List::size).sum() +
+                tagRules.values().stream().mapToInt(List::size).sum();
+    }
+    
+    public static boolean hasNoRules() {
+        return rules.isEmpty() && tagRules.isEmpty();
     }
 }
