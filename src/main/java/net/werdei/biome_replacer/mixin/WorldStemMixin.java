@@ -24,6 +24,8 @@ import java.util.List;
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.server.RegistryLayer;
 import com.mojang.datafixers.util.Either;
+//?} else {
+/*import net.minecraft.core.RegistryAccess;*/
 //?}
 //? if >=1.20.2 {
 import net.minecraft.core.registries.Registries;
