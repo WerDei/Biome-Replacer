@@ -110,6 +110,10 @@ public abstract class WorldStemMixin
                         newParameterList.add(new Pair<>(value.getFirst(), newBiome));
                     }
 
+                    if (newParameterList.isEmpty()) {
+                        BiomeReplacer.logWarn("Replacement resulted in empty biome parameters for dimension " + levelId + ". This may cause generation issues!");
+                    }
+
                     //? if >=1.19.4
                     biomeSource.setParameters(Either.left(new Climate.ParameterList<>(newParameterList)));
                     //? if <1.19.4
