@@ -21,6 +21,7 @@ class ModData {
 class Dependencies {
 	val modmenuVersion = property("deps.modmenu_version")
 	val fapiVersion = property("deps.fabric_api")
+	val biolithEnabled = property("deps.biolith_enabled").toString().toBoolean()
 }
 
 class LoaderData {
@@ -91,14 +92,18 @@ dependencies {
 		}
 	})
 
-	// Biolith integration (optional dependency)
+	// Jank for optional Biolith integration
 	optionalProp("deps.biolith_version") {
-		when {
-			loader.isFabric -> modCompileOnly("com.terraformersmc:biolith-fabric:$it")
-			loader.isNeoforge -> modCompileOnly("com.terraformersmc:biolith-neoforge:$it")
-			loader.isLexforge -> modCompileOnly("com.terraformersmc:biolith-forge:$it")
-			else -> Unit // No Biolith dependency for unknown loaders
+		val biolith = when {
+			loader.isFabric -> "com.terraformersmc:biolith-fabric:$it"
+			loader.isNeoforge -> "com.terraformersmc:biolith-neoforge:$it"
+			loader.isLexforge -> "com.terraformersmc:biolith-forge:$it"
+			else -> Unit
 		}
+		if (deps.biolithEnabled)
+			modImplementation(biolith)
+		else
+			modCompileOnly(biolith)
 	}
 
 	when {

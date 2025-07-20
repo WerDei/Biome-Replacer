@@ -13,6 +13,7 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.werdei.biome_replacer.BiomeReplacer;
 import net.werdei.biome_replacer.config.Config;
 import net.werdei.biome_replacer.mixin.MultiNoiseBiomeSourceAccessor;
@@ -137,13 +138,11 @@ public class BuiltInReplacer
         ResourceLocation resourceLocation = ResourceLocation.tryParse(id);
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome ID: %s", id));
-        //? if >=1.20.2 {
+        //? if >=1.19.4
         return ResourceKey.create(Registries.BIOME, resourceLocation);
-        //?} else if lexforge {
-        /*return ResourceKey.create(ForgeRegistries.BIOMES.getRegistryKey(), resourceLocation);
-         *///?} else {
+        //? if <1.19.4
         /*return ResourceKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
-        //?}
+        
     }
     
     private static TagKey<Biome> getBiomeTagKey(String id) throws Exception
@@ -151,13 +150,10 @@ public class BuiltInReplacer
         ResourceLocation resourceLocation = ResourceLocation.tryParse(id.substring(1)); // Assume id starts with '#' as passed by command logic
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome tag: %s", id));
-        //? if >=1.20.2 {
+        //? if >=1.19.4
         return TagKey.create(Registries.BIOME, resourceLocation);
-        //?} else if lexforge {
-        /*return TagKey.create(ForgeRegistries.BIOMES.getRegistryKey(), resourceLocation);
-         *///?} else {
+        //? if <1.19.4
         /*return TagKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
-        //?}
     }
     
     private static Holder<Biome> getBiomeHolder(String id, Registry<Biome> registry) throws Exception
@@ -168,12 +164,12 @@ public class BuiltInReplacer
         var resourceKey = getBiomeResourceKey(id);
         
         //? if >=1.21.2 {
-        var holder = registry.get(resourceKey);
+        /*var holder = registry.get(resourceKey);
         if (holder.isPresent()) return holder.get();
-        //?} else {
-        /*var holder = registry.getHolder(resourceKey);
+        *///?} else {
+        var holder = registry.getHolder(resourceKey);
         if (holder.isPresent()) return holder.get();
-        *///?}
+        //?}
         
         throw new Exception(String.format("Biome %s is not registered", id));
     }
