@@ -11,7 +11,7 @@ pluginManagement {
 }
 
 plugins {
-	id("dev.kikugie.stonecutter") version "0.5.2"
+	id("dev.kikugie.stonecutter") version "0.7"
 }
 
 stonecutter {
@@ -42,7 +42,7 @@ stonecutter {
 		mc("1.20.6", listOf("fabric", "neoforge"))
 
 		// Codename Minnow
-		// Works across 1.21.2 - 1.21.4
+		// Works across 1.21.2 - 1.21.8
 		mc("1.21.4", listOf("fabric", "neoforge"))
 
 		vcsVersion = "1.21.4-fabric"
