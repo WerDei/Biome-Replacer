@@ -29,7 +29,7 @@ public class BuiltInReplacer
     public static void doReplacement(Registry<Biome> biomeRegistry, Registry<LevelStem> stemRegistry)
     {
         PrepareRules(biomeRegistry);
-        if (replacementRules == null)
+        if (replacementRules.isEmpty())
         {
             BiomeReplacer.log("No rules found, not replacing anything");
             return;
@@ -172,7 +172,7 @@ public class BuiltInReplacer
         /*return TagKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
     }
     
-    private static Holder<Biome> replaceIfNeeded(Holder<Biome> original)
+    public static Holder<Biome> replaceIfNeeded(Holder<Biome> original)
     {
         return replacementRules.getOrDefault(original, original);
     }

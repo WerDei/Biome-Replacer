@@ -72,6 +72,8 @@ repositories {
 	maven("https://maven.terraformersmc.com") // Mod Menu, Biolith
 	maven("https://maven.nucleoid.xyz/") { name = "Nucleoid" } // Placeholder API - required by Mod Menu
 	maven("https://maven.neoforged.net/releases") // NeoForge
+	maven("https://maven.minecraftforge.net/") // TerraBlender
+	maven("https://maven.bawnorton.com/releases") // MixinSquared
 }
 
 dependencies {
@@ -103,7 +105,7 @@ dependencies {
 		if (deps.biolithEnabled)
 			modImplementation(biolith)
 		else
-			modCompileOnly(biolith)
+			modCompileOnly(biolith) // API still needs to be present for compilation, but mod won't be in the running game
 	}
 
 	when {
@@ -111,6 +113,8 @@ dependencies {
 			modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
 			modRuntimeOnly("com.terraformersmc:modmenu:${deps.modmenuVersion}")
 			modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
+			modImplementation("com.github.glitchfiend:TerraBlender-fabric:1.20.6-3.5.0.5")
+			include(implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-fabric:0.3.3")!!)!!)
 		}
 		loader.isNeoforge -> {
 			"neoForge"("net.neoforged:neoforge:${findProperty("deps.neoforge")}")
