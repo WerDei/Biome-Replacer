@@ -1,4 +1,7 @@
-//package net.werdei.biome_replacer.replacer;
+// TODO if bringing Biolith integration back in the future, implement changes from here:
+//  https://github.com/WerDei/Biome-Replacer/blob/f081ff0e14eace1ee9a45329847631fe1dabb44c/src/main/java/net/werdei/biome_replacer/integration/BiolithIntegration.java
+//  (I had to discard them because I changed way too many things at once, sorry LegendarySpy!)
+// package net.werdei.biome_replacer.replacer;
 //
 //import com.terraformersmc.biolith.api.biome.BiomePlacement;
 //import net.minecraft.core.Holder;
