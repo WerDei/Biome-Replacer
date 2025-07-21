@@ -32,13 +32,13 @@ stonecutter {
 
 		// Codename Toad
 		// Works across 1.18.2 - 1.19.2
-		mc("1.19.2", listOf("fabric", "lexforge"))
+		mc("1.19.2", listOf("fabric", "oldforge"))
 
 		// Maybe a 1.19.3 port?..
 
 		// Codename Hippo
 		// Works across 1.19.4 - 1.21.1, with 1.20.5 being the point where we switch to Neoforge
-		mc("1.20.1", listOf("lexforge"))
+		mc("1.20.1", listOf("oldforge"))
 		mc("1.20.6", listOf("fabric", "neoforge"))
 
 		// Codename Minnow

@@ -22,7 +22,7 @@ import java.util.*;
 import static net.werdei.biome_replacer.BiomeReplacer.log;
 import static net.werdei.biome_replacer.BiomeReplacer.logWarn;
 
-public class BuiltInReplacer
+public class VanillaReplacer
 {
     private static Map<Holder<Biome>, Holder<Biome>> replacementRules;
     
@@ -116,10 +116,7 @@ public class BuiltInReplacer
                     TagKey<Biome> tagKey = getBiomeTagKey(tagId);
                     var biomesInTag = biomeRegistry.getTagOrEmpty(tagKey);
                     for (var oldBiome : biomesInTag)
-                    {
-                        BiomeReplacer.log("adding " + oldBiome.getRegisteredName()); //TODO remove
                         replacementRules.putIfAbsent(oldBiome, newBiome);
-                    }
                 }
                 rulesTag++;
             } catch (Exception e) {
@@ -139,14 +136,12 @@ public class BuiltInReplacer
         
         var resourceKey = getBiomeResourceKey(id);
         
-        //? if >=1.21.2 {
-        /*var holder = registry.get(resourceKey);
-        if (holder.isPresent()) return holder.get();
-        *///?} else {
-        var holder = registry.getHolder(resourceKey);
-        if (holder.isPresent()) return holder.get();
-        //?}
+        //? if >=1.21.2
+        var holder = registry.get(resourceKey);
+        //? if <1.21.2
+        /*var holder = registry.getHolder(resourceKey);*/
         
+        if (holder.isPresent()) return holder.get();
         throw new Exception(String.format("Biome %s is not registered", id));
     }
     

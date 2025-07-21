@@ -1,8 +1,7 @@
-package net.werdei.biome_replacer.mixin.terra_blender;
+package net.werdei.biome_replacer.mixin.terrablender;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.werdei.biome_replacer.replacer.TerraBlenderReplacer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,6 +13,11 @@ import java.util.List;
 @Mixin(LevelUtils.class)
 public class LevelUtilsMixin
 {
+    // TODO Doesn't compile on forge for whatever reason, can't be bothered to fix this for now. It's relevant
+    //  for "possibleBiomes" list which is only used in /locate biome (as far as I know), so not a high priority
+    // Also throws warnings on compile, but seems to be work fine anyway? mixins are fucking weird
+    
+    //? if !oldforge {
     @ModifyArg(
             method = "initializeBiomes",
             at = @At(
@@ -23,4 +27,5 @@ public class LevelUtilsMixin
     {
         return TerraBlenderReplacer.modifyDeferredBiomeList(original);
     }
+    //?}
 }

@@ -22,10 +22,5 @@ modId = "minecraft"
 type = "required"
 versionRange = "${minecraft}"
 
-[["dependencies.${id}"]]
-modId = "biolith"
-type = "optional"
-versionRange = "*"
-
 [[mixins]]
 config = "${id}.mixins.json"

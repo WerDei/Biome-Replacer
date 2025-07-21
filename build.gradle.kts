@@ -21,7 +21,9 @@ class ModData {
 class Dependencies {
 	val modmenuVersion = property("deps.modmenu_version")
 	val fapiVersion = property("deps.fabric_api")
-	val biolithEnabled = property("deps.biolith_enabled").toString().toBoolean()
+	val mixinsquaredVersion = property("deps.mixinsquared")
+	val mixinExtrasVersion = property("deps.mixinextras")
+	val terrablenderEnabled = property("deps.terrablender_enabled").toString().toBoolean()
 }
 
 class LoaderData {
@@ -29,8 +31,8 @@ class LoaderData {
 	val loaderShort = if (loader == "neoforge") "neo" else loader
 	val isFabric = loader == "fabric"
 	val isNeoforge = loader == "neoforge"
-	val isLexforge = loader == "forge"
-	val isForgeLike = isNeoforge || isLexforge
+	val isOldforge = loader == "forge"
+	val isForgeLike = isNeoforge || isOldforge
 }
 
 class McData {
@@ -50,20 +52,17 @@ base { archivesName.set(mod.id.replace("_", "")) }
 
 stonecutter.const("fabric", loader.isFabric)
 stonecutter.const("neoforge", loader.isNeoforge)
-stonecutter.const("lexforge", loader.isLexforge)
+stonecutter.const("oldforge", loader.isOldforge)
 stonecutter.const("forge-like", loader.isForgeLike)
 
 loom {
 	silentMojangMappingsLicense()
 
 	runConfigs.all {
-		ideConfigGenerated(stonecutter.current.isActive)
+		ideConfigGenerated(false)
 		runDir = "../../run"
 	}
-
-	runConfigs.remove(runConfigs["server"])
-
-	if (loader.isLexforge)
+	if (loader.isOldforge)
 		forge.mixinConfig("biome_replacer.mixins.json")
 }
 
@@ -86,7 +85,7 @@ dependencies {
 
 		// Parchment mappings (it adds parameter mappings & javadoc)
 		optionalProp("deps.parchment_version") {
-			if (mc.version == "1.20.1" && loader.isLexforge) {
+			if (mc.version == "1.20.1" && loader.isOldforge) {
 				// Skip Parchment for 1.20.1 Forge to avoid obfuscation mapping conflicts
 			} else {
 				parchment("org.parchmentmc.data:parchment-${mc.version}:$it@zip")
@@ -95,17 +94,12 @@ dependencies {
 	})
 
 	// Jank for optional Biolith integration
-	optionalProp("deps.biolith_version") {
-		val biolith = when {
-			loader.isFabric -> "com.terraformersmc:biolith-fabric:$it"
-			loader.isNeoforge -> "com.terraformersmc:biolith-neoforge:$it"
-			loader.isLexforge -> "com.terraformersmc:biolith-forge:$it"
-			else -> Unit
-		}
-		if (deps.biolithEnabled)
-			modImplementation(biolith)
+	optionalProp("deps.terrablender") {
+		val terraBlender = "com.github.glitchfiend:TerraBlender-${loader.loader}:${mc.version}-$it"
+		if (deps.terrablenderEnabled)
+			modImplementation(terraBlender)
 		else
-			modCompileOnly(biolith) // API still needs to be present for compilation, but mod won't be in the running game
+			modCompileOnly(terraBlender) // API still needs to be present for compilation, but mod won't be in the running game
 	}
 
 	when {
@@ -113,18 +107,19 @@ dependencies {
 			modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
 			modRuntimeOnly("com.terraformersmc:modmenu:${deps.modmenuVersion}")
 			modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
-			modImplementation("com.github.glitchfiend:TerraBlender-fabric:1.20.6-3.5.0.5")
-			include(implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-fabric:0.3.3")!!)!!)
+			include(implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-fabric:${deps.mixinsquaredVersion}")!!)!!)
 		}
 		loader.isNeoforge -> {
 			"neoForge"("net.neoforged:neoforge:${findProperty("deps.neoforge")}")
+			compileOnly(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:${deps.mixinsquaredVersion}")!!)
+			implementation(include("com.github.bawnorton.mixinsquared:mixinsquared-neoforge:${deps.mixinsquaredVersion}")!!)
 		}
-		loader.isLexforge -> {
+		loader.isOldforge -> {
 			"forge"("net.minecraftforge:forge:${mc.version}-${findProperty("deps.forge")}")
-//			"io.github.llamalad7:mixinextras-forge:${mod.dep("mixin_extras")}".let {
-//				implementation(it)
-//				include(it)
-//			}
+			compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${deps.mixinExtrasVersion}")!!)
+			implementation(include("io.github.llamalad7:mixinextras-forge:${deps.mixinExtrasVersion}")!!)
+			compileOnly(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-common:${deps.mixinsquaredVersion}")!!)
+			implementation(include("com.github.bawnorton.mixinsquared:mixinsquared-forge:${deps.mixinsquaredVersion}")!!)
 		}
 		else -> {
 			throw GradleException("Unknown loader: ${loader.loader}")
@@ -170,7 +165,7 @@ tasks.processResources {
 		filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
 		exclude("fabric.mod.json", "META-INF/mods.toml", "pack.mcmeta", "icon.png")
 	}
-	else if (loader.isLexforge)
+	else if (loader.isOldforge)
 	{
 		filesMatching("META-INF/mods.toml") { expand(props) }
 		filesMatching("pack.mcmeta") { expand(props) }
@@ -202,28 +197,28 @@ publishMods {
 }
 
 if (stonecutter.current.isActive) {
-	rootProject.tasks.register("buildActive") {
+	rootProject.tasks.register("Build active project") {
 		group = "stonecutter"
 		dependsOn(tasks.named("build"))
 	}
 }
 
 if (stonecutter.current.isActive) {
-	rootProject.tasks.register("runActive") {
+	rootProject.tasks.register("Run active Client") {
 		group = "stonecutter"
 		dependsOn(tasks.named("runClient"))
 	}
 }
 
 if (stonecutter.current.isActive) {
-	rootProject.tasks.register("runActiveServer") {
+	rootProject.tasks.register("Run active Server") {
 		group = "stonecutter"
 		dependsOn(tasks.named("runServer"))
 	}
 }
 
 if (stonecutter.current.isActive) {
-	rootProject.tasks.register("publishActiveVersion") {
+	rootProject.tasks.register("Publish active project") {
 		group = "publishing"
 		dependsOn(tasks.named("publishMods"))
 	}

@@ -1,15 +1,14 @@
 {
     "required": true,
     "minVersion": "0.8",
-    "package": "net.werdei.biome_replacer.mixin",
     "compatibilityLevel": "JAVA_17",
+    "package": "net.werdei.biome_replacer.mixin",
+    "plugin": "net.werdei.biome_replacer.MixinPlugin",
     "mixins": [
         "MultiNoiseBiomeSourceAccessor",
         "WorldStemMixin",
-        "terra_blender.ClimateParameterListMixin",
-        "terra_blender.LevelUtilsMixin"
-    ],
-    "client": [
+        "terrablender.ClimateParameterListMixin",
+        "terrablender.LevelUtilsMixin"
     ],
     "injectors": {
         "defaultRequire": 1

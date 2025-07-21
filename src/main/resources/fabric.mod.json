@@ -43,9 +43,6 @@
 		"fabricloader": ">=0.16",
 		"minecraft": "${minecraft}"
 	},
-	"suggests": {
-		"biolith": "*"
-	},
 	"custom": {
 		"modmenu": {
 			"update_checker": true

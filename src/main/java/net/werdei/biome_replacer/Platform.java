@@ -11,10 +11,12 @@ import net.fabricmc.loader.api.FabricLoader;
 /*import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.ModList;
-*///?} else if lexforge {
+import net.neoforged.fml.loading.LoadingModList;
+*///?} else if oldforge {
 /*import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.loading.LoadingModList;
 *///?}
 
 //? if forge-like
@@ -46,7 +48,10 @@ public class Platform /*? if fabric {*/ implements ModInitializer /*?}*/
     {
         //? if fabric
         return FabricLoader.getInstance().isModLoaded(modId);
-        //? if forge-like
-        /*return ModList.get().isLoaded(modId);*/
+        //? if forge-like {
+        /*return ModList.get() != null // ModList can be null if checking too early (like in the MixinPlugin)
+                ? ModList.get().isLoaded(modId)
+                : LoadingModList.get().getModFileById(modId) != null;
+        *///?}
     }
 }

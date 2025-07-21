@@ -1,4 +1,4 @@
-package net.werdei.biome_replacer.mixin.terra_blender;
+package net.werdei.biome_replacer.mixin.terrablender;
 
 import com.bawnorton.mixinsquared.TargetHandler;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -14,6 +14,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import java.util.List;
 
+// Had to use MixinSquared for this fix https://github.com/Bawnorton/MixinSquared
+// If IntelliJ is being angry, download plugin https://plugins.jetbrains.com/plugin/26828-mixinsquared
 @Mixin(value = Climate.ParameterList.class, priority = 1500)
 public abstract class ClimateParameterListMixin
 {
@@ -29,7 +31,7 @@ public abstract class ClimateParameterListMixin
                     ordinal = 1
             )
     )
-    private static List<Pair<Climate.ParameterPoint, Holder<Biome>>> replaceBiomesInPairs
+    private List<Pair<Climate.ParameterPoint, Holder<Biome>>> replaceBiomesInPairs
             (List<Pair<Climate.ParameterPoint, Holder<Biome>>> pairs, @Local Registry<Biome> biomeRegistry)
     {
         return TerraBlenderReplacer.modifyPairList(pairs, biomeRegistry);
