@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -16,6 +15,9 @@ import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.werdei.biome_replacer.BiomeReplacer;
 import net.werdei.biome_replacer.config.Config;
 import net.werdei.biome_replacer.mixin.MultiNoiseBiomeSourceAccessor;
+//? if >=1.19.4 {
+import net.minecraft.core.registries.Registries;
+//?}
 
 import java.util.*;
 

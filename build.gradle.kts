@@ -2,7 +2,7 @@ import org.gradle.internal.extensions.stdlib.capitalized
 
 plugins {
 	id("dev.architectury.loom") version "1.7.+"
-	id("me.modmuss50.mod-publish-plugin")
+	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
 
 class ModData {
@@ -50,10 +50,12 @@ version = "${mod.versionWithCodename}-${loader.loaderShort}"
 group = mod.group
 base { archivesName.set(mod.id.replace("_", "")) }
 
-stonecutter.const("fabric", loader.isFabric)
-stonecutter.const("neoforge", loader.isNeoforge)
-stonecutter.const("oldforge", loader.isOldforge)
-stonecutter.const("forge-like", loader.isForgeLike)
+stonecutter {
+	constants["fabric"] = loader.isFabric
+	constants["neoforge"] = loader.isNeoforge
+	constants["oldforge"] = loader.isOldforge
+	constants["forge-like"] = loader.isForgeLike
+}
 
 loom {
 	silentMojangMappingsLicense()
@@ -227,7 +229,3 @@ if (stonecutter.current.isActive) {
 @Suppress("TYPE_MISMATCH", "UNRESOLVED_REFERENCE")
 fun <T> optionalProp(property: String, block: (String) -> T?): T? =
 	findProperty(property)?.toString()?.takeUnless { it.isBlank() }?.let(block)
-
-fun isPropDefined(property: String): Boolean {
-	return property(property)?.toString()?.isNotBlank() ?: false
-}

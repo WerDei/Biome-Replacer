@@ -1,9 +1,4 @@
-# Biome replacer 2.0 - the Omniversion Update
-
-- Now supports both Fabric and Neoforge/Forge, across every* version since 1.18.2!
-From now on, new mod releases will be available for all of them at the same time.
-- New logo and banner, made by LegendarySpy
-- Experimental feature: remove biomes with a random chance.
-- Fabric: Removed Fabric API dependency (it wasn't used anyway)
-
-\* 1.19.3 has been skipped, for now
+- Fixed compatibility issue with some TerraBlender-based mods (vanilla biomes weren't always replaced)
+- As a side effect, we now have full TerraBlender support. It's now possible to replace or remove modded biomes added with it.
+  - (You should still use mod configs whenever possible, but is now an option of you really want it)
+- Fixed missing logo on Forge

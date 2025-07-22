@@ -1,6 +1,5 @@
 package net.werdei.biome_replacer.mixin;
 
-import net.minecraft.core.registries.Registries;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.packs.resources.CloseableResourceManager;
@@ -12,9 +11,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 //? if >=1.19.4 {
 import net.minecraft.core.LayeredRegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.RegistryLayer;
 //?} else {
-/*import net.minecraft.core.registries.Registries;
+/*import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 *///?}
 
 @Mixin(WorldStem.class)

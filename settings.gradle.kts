@@ -15,15 +15,12 @@ plugins {
 }
 
 stonecutter {
-	kotlinController= true
+	kotlinController = true
 	centralScript = "build.gradle.kts"
 
 	shared {
-		fun mc(mcVersion: String, loaders: Iterable<String>) {
-			for (loader in loaders) {
-				vers("$mcVersion-$loader", mcVersion)
-			}
-		}
+		fun add(minecraft: String, vararg loaders: String) =
+            loaders.forEach { loader -> vers("$minecraft-$loader", minecraft) }
 
 		// It's a good practice to append MC version to your mod's version, but since our builds work across
 		// multiple Minecraft versions, it might be confusing to see, like, version 2.0-mc1.19.4 working on 1.21.
@@ -32,18 +29,18 @@ stonecutter {
 
 		// Codename Toad
 		// Works across 1.18.2 - 1.19.2
-		mc("1.19.2", listOf("fabric", "oldforge"))
+		add("1.19.2", "fabric", "oldforge")
 
 		// Maybe a 1.19.3 port?..
 
 		// Codename Hippo
 		// Works across 1.19.4 - 1.21.1, with 1.20.5 being the point where we switch to Neoforge
-		mc("1.20.1", listOf("oldforge"))
-		mc("1.20.6", listOf("fabric", "neoforge"))
+		add("1.20.1", "oldforge")
+		add("1.20.6", "fabric", "neoforge")
 
 		// Codename Minnow
 		// Works across 1.21.2 - 1.21.8
-		mc("1.21.4", listOf("fabric", "neoforge"))
+		add("1.21.4", "fabric", "neoforge")
 
 		vcsVersion = "1.21.4-fabric"
 	}
