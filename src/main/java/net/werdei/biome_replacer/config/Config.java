@@ -80,24 +80,11 @@ public class Config
         {
             writer.println("! Put your rules here in the format:");
             writer.println("! old_biome > new_biome");
-            writer.println("! old_biome > new_biome probability");
             writer.println("! ");
             writer.println("! Examples (remove ! in front of one to activate it):");
             writer.println("! minecraft:dark_forest > minecraft:cherry_grove");
-            writer.println("! minecraft:desert > minecraft:plains 0.5");
-            writer.println("! terralith:lavender_forest > aurorasdeco:lavender_plains");
-            writer.println("! terralith:lavender_valley > aurorasdeco:lavender_plains");
-            writer.println("! terralith:cave/infested_caves > minecraft:dripstone_caves");
-            writer.println("! ");
-            writer.println("! Chance-based replacement (probability is 0.0 to 1.0):");
-            writer.println("! minecraft:forest > minecraft:desert 0.3    ! 30% chance");
-            writer.println("! minecraft:forest > minecraft:plains 0.3    ! 30% chance");
-            writer.println("! Note: Multiple rules for same biome are supported!");
-            writer.println("! ");
-            writer.println("! Remove biomes completely:");
-            writer.println("! minecraft:desert > null");
-            writer.println("! ");
-            writer.println("! For full biome list, see https://minecraft.wiki/w/Biome#Biome_IDs");
+            writer.println("! #minecraft:is_forest > minecraft:desert");
+            writer.println("! #terralith:skylands > null");
         }
         catch (IOException e)
         {

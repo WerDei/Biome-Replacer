@@ -30,13 +30,6 @@ public class BiomeReplacer
         VanillaReplacer.doReplacement(biomeRegistry, stemRegistry);
     }
     
-    public static List<Warning> getWarningsAndClear()
-    {
-        var out = unshownWarnings;
-        unshownWarnings = new ArrayList<>();
-        return out;
-    }
-    
     public static void debug(String message)
     {
         LOGGER.debug(LOG_PREFIX + "{}", message);
@@ -52,10 +45,18 @@ public class BiomeReplacer
         LOGGER.warn(LOG_PREFIX + "{}", message);
     }
     
+    
     public static void logRuleWarning(int line, String message)
     {
-        unshownWarnings.add(new Warning(line, message));
+//        unshownWarnings.add(new Warning(line, message));
         LOGGER.warn("{} Config issue on line {}: {}", LOG_PREFIX, line, message);
+    }
+    
+    public static List<Warning> getWarningsAndClear()
+    {
+        var out = unshownWarnings;
+        unshownWarnings = new ArrayList<>();
+        return out;
     }
     
     
