@@ -22,7 +22,6 @@ import net.minecraft.core.registries.Registries;
 import java.util.*;
 
 import static net.werdei.biome_replacer.BiomeReplacer.log;
-import static net.werdei.biome_replacer.BiomeReplacer.logWarn;
 
 public class VanillaReplacer
 {
@@ -82,49 +81,30 @@ public class VanillaReplacer
         var rulesTag = 0;
         var rulesIgnored = 0;
         
-        // Direct biome replacements
-        // Because these are loaded first and rules are added "putIfAbsent", they have precedence over tag rules.
-        for (var entry : Config.rules.entrySet())
+        for (var rule : Config.rules) try
         {
-            var oldBiomeId = entry.getKey();
-            var replacements = entry.getValue();
-            
-            try
+            if (rule.from().startsWith("#"))
             {
-                var oldBiome = getBiomeHolder(oldBiomeId, biomeRegistry);
-                for (Config.BiomeReplacement replacement : replacements)
-                {
-                    Holder<Biome> newBiome = getBiomeHolder(replacement.targetBiome, biomeRegistry);
+                var tagKey = getBiomeTagKey(rule.from().substring(1));
+                var newBiome = getBiomeHolder(rule.to(), biomeRegistry);
+                // Unwrapping the biome key and adding all biomes from it.
+                // Using "putIfAbsent" to make sure direct rules have priority
+                for (var oldBiome : biomeRegistry.getTagOrEmpty(tagKey))
                     replacementRules.putIfAbsent(oldBiome, newBiome);
-                }
+                rulesTag++;
+            }
+            else
+            {
+                var oldBiome = getBiomeHolder(rule.from(), biomeRegistry);
+                var newBiome = getBiomeHolder(rule.to(), biomeRegistry);
+                replacementRules.put(oldBiome, newBiome);
                 rulesDirect++;
             }
-            catch (Exception e) {
-                logWarn(String.format("Ignoring rule \"%s\" - %s", oldBiomeId, e.getMessage()));
-                rulesIgnored++;
-            }
         }
-        
-        // Tag-based replacements
-        for (var entry : Config.tagRules.entrySet()) {
-            var tagId = entry.getKey();
-            var replacements = entry.getValue();
-            
-            try {
-                for (Config.BiomeReplacement replacement : replacements)
-                {
-                    Holder<Biome> newBiome = getBiomeHolder(replacement.targetBiome, biomeRegistry);
-                    // Unwrapping the biome key
-                    TagKey<Biome> tagKey = getBiomeTagKey(tagId);
-                    var biomesInTag = biomeRegistry.getTagOrEmpty(tagKey);
-                    for (var oldBiome : biomesInTag)
-                        replacementRules.putIfAbsent(oldBiome, newBiome);
-                }
-                rulesTag++;
-            } catch (Exception e) {
-                logWarn(String.format("Ignoring tag rule \"#%s\" - %s", tagId, e.getMessage()));
-                rulesIgnored++;
-            }
+        catch (Exception e)
+        {
+            BiomeReplacer.logRuleWarning(rule.line(), e.getMessage());
+            rulesIgnored++;
         }
         
         log(String.format("Loaded %d rules (%d direct, %d tag-based) and ignored %d",
@@ -144,28 +124,28 @@ public class VanillaReplacer
         /*var holder = registry.getHolder(resourceKey);*/
         
         if (holder.isPresent()) return holder.get();
-        throw new Exception(String.format("Biome %s is not registered", id));
+        throw new Exception(String.format("Biome does not exist: %s", id));
     }
     
     private static ResourceKey<Biome> getBiomeResourceKey(String id) throws Exception
     {
-        ResourceLocation resourceLocation = ResourceLocation.tryParse(id);
+        var resourceLocation = ResourceLocation.tryParse(id);
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome ID: %s", id));
-        //? if >=1.19.4
+        //? if >=1.19.3
         return ResourceKey.create(Registries.BIOME, resourceLocation);
-        //? if <1.19.4
+        //? if <1.19.3
         /*return ResourceKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
     }
     
     private static TagKey<Biome> getBiomeTagKey(String id) throws Exception
     {
-        ResourceLocation resourceLocation = ResourceLocation.tryParse(id); // Assume id starts with '#' as passed by command logic
+        var resourceLocation = ResourceLocation.tryParse(id);
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome tag: #%s", id));
-        //? if >=1.19.4
+        //? if >=1.19.3
         return TagKey.create(Registries.BIOME, resourceLocation);
-        //? if <1.19.4
+        //? if <1.19.3
         /*return TagKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
     }
     

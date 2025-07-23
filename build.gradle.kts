@@ -203,23 +203,14 @@ if (stonecutter.current.isActive) {
 		group = "stonecutter"
 		dependsOn(tasks.named("build"))
 	}
-}
-
-if (stonecutter.current.isActive) {
 	rootProject.tasks.register("Run active Client") {
 		group = "stonecutter"
 		dependsOn(tasks.named("runClient"))
 	}
-}
-
-if (stonecutter.current.isActive) {
 	rootProject.tasks.register("Run active Server") {
 		group = "stonecutter"
 		dependsOn(tasks.named("runServer"))
 	}
-}
-
-if (stonecutter.current.isActive) {
 	rootProject.tasks.register("Publish active project") {
 		group = "publishing"
 		dependsOn(tasks.named("publishMods"))

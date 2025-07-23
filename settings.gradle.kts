@@ -31,7 +31,9 @@ stonecutter {
 		// Works across 1.18.2 - 1.19.2
 		add("1.19.2", "fabric", "oldforge")
 
-		// Maybe a 1.19.3 port?..
+		// Codename Gecko
+		// Works on 1.19.3, which is largely irrelevant was trivial to port to
+		add("1.19.3", "fabric", "oldforge")
 
 		// Codename Hippo
 		// Works across 1.19.4 - 1.21.1, with 1.20.5 being the point where we switch to Neoforge

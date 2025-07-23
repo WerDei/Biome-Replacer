@@ -15,7 +15,6 @@ logoFile = "logo.png"
 [["dependencies.${id}"]]
 modId = "neoforge"
 type = "required"
-versionRange = "${forgeConstraint}"
 
 [["dependencies.${id}"]]
 modId = "minecraft"

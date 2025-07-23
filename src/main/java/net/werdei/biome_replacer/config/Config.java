@@ -1,93 +1,67 @@
 package net.werdei.biome_replacer.config;
 
-import net.werdei.biome_replacer.BiomeReplacer;
 import net.werdei.biome_replacer.Platform;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
+
+import static net.werdei.biome_replacer.BiomeReplacer.logRuleWarning;
 
 public class Config
 {
     public static final String FILE_NAME = "biome_replacer.properties";
     public static final String REMOVE_BIOME_KEYWORD = "null";
 
-    public static final Map<String, List<BiomeReplacement>> rules = new HashMap<>();
-    public static final Map<String, List<BiomeReplacement>> tagRules = new HashMap<>();
+    public static final List<Rule> rules = new ArrayList<>();
 
-    public static class BiomeReplacement {
-        public final String targetBiome;
-        public final double probability; // 0.0 to 1.0
-
-        public BiomeReplacement(String targetBiome, double probability) {
-            this.targetBiome = targetBiome;
-            this.probability = Math.max(0.0, Math.min(1.0, probability)); // Clamp between 0 and 1
-        }
-
-        public BiomeReplacement(String targetBiome) {
-            this(targetBiome, 1.0); // Default to 100% probability
-        }
-    }
 
     public static void reload()
     {
-        File file = getOrCreateFile();
-
-        try (Scanner reader = new Scanner(file))
+        try (Scanner reader = new Scanner(getOrCreateFile()))
         {
             rules.clear();
-            tagRules.clear();
-
+            var lineCount = 0;
             while (reader.hasNextLine())
             {
-                String line = reader.nextLine().trim();
-
+                var line = reader.nextLine().trim();
+                lineCount++;
+                
                 // Comments. Keeping "# " for backwards compatibility with old BR versions.
                 if (line.isEmpty() || line.startsWith("!") || line.startsWith("# "))
                     continue;
-
+                
                 // Options. Might be used later.
                 if (line.contains("="))
+                    continue;
+                
+                var split = line.split(">", 2);
+                if (split.length != 2)
                 {
+                    logRuleWarning(lineCount, "Incorrect format, should be 'old_biome > new_biome'");
                     continue;
                 }
-
-                String[] result = line.split(">", 2);
-                if (result.length == 2)
+                
+                var oldBiome = split[0].trim();
+                var newBiomeWithProbability = split[1].trim().split("\\s+", 2);
+                var newBiome = newBiomeWithProbability[0].trim();
+                
+                double probability = 1.0;
+                if (newBiomeWithProbability.length > 1) try
                 {
-                    String oldBiome = result[0].trim();
-                    String newBiomeWithProb = result[1].trim();
-
-                    String[] biomeAndProb = newBiomeWithProb.split("\\s+", 2);
-                    String newBiome = biomeAndProb[0].trim();
-                    double probability = 1.0;
-
-                    if (biomeAndProb.length > 1) {
-                        try {
-                            probability = Double.parseDouble(biomeAndProb[1].trim());
-                            if (probability < 0.0 || probability > 1.0) {
-                                BiomeReplacer.logWarn("Probability will be clamped be between 0.0 and 1.0 in rule: " + line);
-                                
-                            }
-                        } catch (NumberFormatException e) {
-                            BiomeReplacer.logWarn("Invalid probability format '" + biomeAndProb[1].trim() + "' for rule: " + line + ". Using 1.0 (100% chance). Expected format: old_biome > new_biome probability");
-                            probability = 1.0; // Reset to default
-                        }
-                    }
-
-                    BiomeReplacement replacement = new BiomeReplacement(newBiome, probability);
-
-                    if (oldBiome.startsWith("#")) {
-                        String tagName = oldBiome.substring(1);
-                        tagRules.computeIfAbsent(tagName, k -> new ArrayList<>()).add(replacement);
-                    } else {
-                        rules.computeIfAbsent(oldBiome, k -> new ArrayList<>()).add(replacement);
-                    }
+                    logRuleWarning(lineCount, "Chance-based replacement was removed from the mod (for now), probability will be ignored");
+                    probability = Double.parseDouble(newBiomeWithProbability[1].trim());
+//                    if (probability < 0.0 || probability > 1.0)
+//                        logRuleIssue(lineCount, "Probability will be clamped between 0 and 1");
                 }
+                catch (NumberFormatException e)
+                {
+//                    logRuleIssue(lineCount, "Unexpected number format. If you wanted to add probability, make sure it's a valid number");
+                }
+                
+                rules.add(new Rule(lineCount, oldBiome, newBiome, probability));
             }
         }
         catch (IOException e)
@@ -132,12 +106,11 @@ public class Config
         return file;
     }
     
-    public static int getRuleCount() {
-        return rules.values().stream().mapToInt(List::size).sum() +
-                tagRules.values().stream().mapToInt(List::size).sum();
-    }
     
-    public static boolean hasNoRules() {
-        return rules.isEmpty() && tagRules.isEmpty();
+    public record Rule(int line, String from, String to, double probability)
+    {
+        public Rule {
+            probability = Math.max(0.0, Math.min(1.0, probability));
+        }
     }
 }

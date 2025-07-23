@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-//? if >=1.19.4 {
+//? if >=1.19.3 {
 import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.RegistryLayer;
@@ -21,7 +21,7 @@ import net.minecraft.core.RegistryAccess;
 @Mixin(WorldStem.class)
 public abstract class WorldStemMixin
 {
-    //? if >=1.19.4 {
+    //? if >=1.19.3 {
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onStemCreated(CloseableResourceManager closeableResourceManager, ReloadableServerResources reloadableServerResources, LayeredRegistryAccess<RegistryLayer> layeredRegistryAccess, WorldData worldData, CallbackInfo ci)
     {
