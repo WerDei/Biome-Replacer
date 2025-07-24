@@ -15,7 +15,7 @@ import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.werdei.biome_replacer.BiomeReplacer;
 import net.werdei.biome_replacer.config.Config;
 import net.werdei.biome_replacer.mixin.MultiNoiseBiomeSourceAccessor;
-//? if >=1.19.4 {
+//? if >=1.19.3 {
 import net.minecraft.core.registries.Registries;
 //?}
 
@@ -103,7 +103,7 @@ public class VanillaReplacer
         }
         catch (Exception e)
         {
-            BiomeReplacer.logRuleWarning(rule.line(), e.getMessage());
+            BiomeReplacer.logRuleWarning(rule.line(), e.getMessage() + ", ignoring rule");
             rulesIgnored++;
         }
         
@@ -124,14 +124,14 @@ public class VanillaReplacer
         /*var holder = registry.getHolder(resourceKey);*/
         
         if (holder.isPresent()) return holder.get();
-        throw new Exception(String.format("Biome does not exist: %s", id));
+        throw new Exception(String.format("Biome '%s' does not exist", id));
     }
     
     private static ResourceKey<Biome> getBiomeResourceKey(String id) throws Exception
     {
         var resourceLocation = ResourceLocation.tryParse(id);
         if (resourceLocation == null)
-            throw new Exception(String.format("Invalid biome ID: %s", id));
+            throw new Exception(String.format("Invalid biome ID '%s'", id));
         //? if >=1.19.3
         return ResourceKey.create(Registries.BIOME, resourceLocation);
         //? if <1.19.3
@@ -142,7 +142,7 @@ public class VanillaReplacer
     {
         var resourceLocation = ResourceLocation.tryParse(id);
         if (resourceLocation == null)
-            throw new Exception(String.format("Invalid biome tag: #%s", id));
+            throw new Exception(String.format("Invalid biome tag '#%s'", id));
         //? if >=1.19.3
         return TagKey.create(Registries.BIOME, resourceLocation);
         //? if <1.19.3

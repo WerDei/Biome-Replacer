@@ -49,7 +49,7 @@ public class BiomeReplacer
     public static void logRuleWarning(int line, String message)
     {
 //        unshownWarnings.add(new Warning(line, message));
-        LOGGER.warn("{} Config issue on line {}: {}", LOG_PREFIX, line, message);
+        LOGGER.warn("{}Config issue on line {}: {}", LOG_PREFIX, line, message);
     }
     
     public static List<Warning> getWarningsAndClear()

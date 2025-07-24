@@ -107,7 +107,8 @@ dependencies {
 	when {
 		loader.isFabric -> {
 			modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-			modRuntimeOnly("com.terraformersmc:modmenu:${deps.modmenuVersion}")
+			if (mc.version != "1.19.3") // Having modmenu on 1.19.3 makes it download the second instance of Fabric loader?? whar
+				modRuntimeOnly("com.terraformersmc:modmenu:${deps.modmenuVersion}")
 			modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
 			include(implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-fabric:${deps.mixinsquaredVersion}")!!)!!)
 		}
@@ -210,10 +211,6 @@ if (stonecutter.current.isActive) {
 	rootProject.tasks.register("Run active Server") {
 		group = "stonecutter"
 		dependsOn(tasks.named("runServer"))
-	}
-	rootProject.tasks.register("Publish active project") {
-		group = "publishing"
-		dependsOn(tasks.named("publishMods"))
 	}
 }
 
