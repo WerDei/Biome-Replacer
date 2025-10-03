@@ -26,14 +26,34 @@ import static net.werdei.biome_replacer.BiomeReplacer.log;
 public class VanillaReplacer
 {
     private static Map<Holder<Biome>, Holder<Biome>> replacementRules;
+    private static Map<String, Map<Holder<Biome>, Holder<Biome>>> dimensionReplacementRules;
     
     public static void doReplacement(Registry<Biome> biomeRegistry, Registry<LevelStem> stemRegistry)
     {
         PrepareRules(biomeRegistry);
-        if (replacementRules.isEmpty())
+        if (replacementRules.isEmpty() && (dimensionReplacementRules == null || dimensionReplacementRules.isEmpty()))
         {
             BiomeReplacer.log("No rules found, not replacing anything");
             return;
+        }
+        
+        var knownDimensions = new HashSet<String>();
+        for (var entry : stemRegistry.entrySet())
+            knownDimensions.add(entry.getKey().location().toString());
+        
+        if (dimensionReplacementRules != null && !dimensionReplacementRules.isEmpty())
+        {
+            for (var dimId : dimensionReplacementRules.keySet())
+            {
+                if (!knownDimensions.contains(dimId))
+                {
+                    for (var rule : Config.rules)
+                    {
+                        if (dimId.equals(rule.dimension()))
+                            BiomeReplacer.logRuleWarning(rule.line(), String.format("Dimension '%s' does not exist, ignoring rule", dimId));
+                    }
+                }
+            }
         }
         
         for (var levelStem : stemRegistry.entrySet())
@@ -57,9 +77,22 @@ public class VanillaReplacer
             /*var parameters = biomeSource.getParameters();*/
             
             List<Pair<Climate.ParameterPoint, Holder<Biome>>> newParameterList = new ArrayList<>();
+            
+            Map<Holder<Biome>, Holder<Biome>> effectiveRules;
+            {
+                var merged = new HashMap<Holder<Biome>, Holder<Biome>>();
+                if (replacementRules != null && !replacementRules.isEmpty())
+                    merged.putAll(replacementRules);
+                var dimOverlay = (dimensionReplacementRules != null)
+                        ? dimensionReplacementRules.get(levelId.toString())
+                        : null;
+                if (dimOverlay != null && !dimOverlay.isEmpty())
+                    merged.putAll(dimOverlay);
+                effectiveRules = merged;
+            }
             for (var value : parameters.values())
             {
-                var newBiome = replaceIfNeeded(value.getSecond());
+                var newBiome = replaceFromMap(value.getSecond(), effectiveRules);
                 if (newBiome == null) continue;
                 newParameterList.add(new Pair<>(value.getFirst(), newBiome));
             }
@@ -77,12 +110,16 @@ public class VanillaReplacer
     private static void PrepareRules(Registry<Biome> biomeRegistry)
     {
         replacementRules = new HashMap<>();
+        dimensionReplacementRules = new HashMap<>();
         var rulesDirect = 0;
         var rulesTag = 0;
         var rulesIgnored = 0;
         
         for (var rule : Config.rules) try
         {
+            Map<Holder<Biome>, Holder<Biome>> targetMap = rule.dimension() == null
+                    ? replacementRules
+                    : dimensionReplacementRules.computeIfAbsent(rule.dimension(), k -> new HashMap<>());
             if (rule.from().startsWith("#"))
             {
                 var tagKey = getBiomeTagKey(rule.from().substring(1));
@@ -90,14 +127,14 @@ public class VanillaReplacer
                 // Unwrapping the biome key and adding all biomes from it.
                 // Using "putIfAbsent" to make sure direct rules have priority
                 for (var oldBiome : biomeRegistry.getTagOrEmpty(tagKey))
-                    replacementRules.putIfAbsent(oldBiome, newBiome);
+                    targetMap.putIfAbsent(oldBiome, newBiome);
                 rulesTag++;
             }
             else
             {
                 var oldBiome = getBiomeHolder(rule.from(), biomeRegistry);
                 var newBiome = getBiomeHolder(rule.to(), biomeRegistry);
-                replacementRules.put(oldBiome, newBiome);
+                targetMap.put(oldBiome, newBiome);
                 rulesDirect++;
             }
         }
@@ -152,5 +189,11 @@ public class VanillaReplacer
     public static Holder<Biome> replaceIfNeeded(Holder<Biome> original)
     {
         return replacementRules.getOrDefault(original, original);
+    }
+    
+    private static Holder<Biome> replaceFromMap(Holder<Biome> original, Map<Holder<Biome>, Holder<Biome>> rules)
+    {
+        if (rules == null || rules.isEmpty()) return original;
+        return rules.getOrDefault(original, original);
     }
 }
