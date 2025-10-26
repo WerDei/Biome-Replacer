@@ -10,16 +10,21 @@ import java.util.Set;
 public class MixinPlugin implements IMixinConfigPlugin
 {
     private static final String TERRABLENDER_ID = "terrablender";
+    private static final String BLUEPRINT_ID = "blueprint";
     private String ownPackage;
     private boolean terrablenderInstalled;
+    private boolean blueprintInstalled;
     
     @Override
     public void onLoad(String mixinPackage)
     {
         ownPackage = mixinPackage;
         terrablenderInstalled = Platform.isModLoaded(TERRABLENDER_ID);
+        blueprintInstalled = Platform.isModLoaded(BLUEPRINT_ID);
         if (terrablenderInstalled)
             BiomeReplacer.log("TerraBlender detected, biome replacements will be injected into it");
+        if (blueprintInstalled)
+            BiomeReplacer.log("Blueprint detected, biome replacements will be injected into it");
     }
     
     @Override
@@ -28,6 +33,8 @@ public class MixinPlugin implements IMixinConfigPlugin
         var mixinShortName = mixinClassName.substring(ownPackage.length() + 1);
         if (mixinShortName.startsWith(TERRABLENDER_ID))
             return terrablenderInstalled;
+        if (mixinShortName.startsWith(BLUEPRINT_ID))
+            return blueprintInstalled;
         return true;
     }
     

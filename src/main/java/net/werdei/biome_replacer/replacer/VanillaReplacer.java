@@ -188,7 +188,21 @@ public class VanillaReplacer
     
     public static Holder<Biome> replaceIfNeeded(Holder<Biome> original)
     {
-        return replacementRules.getOrDefault(original, original);
+        return replaceIfNeeded(original, null);
+    }
+
+    public static Holder<Biome> replaceIfNeeded(Holder<Biome> original, String dimensionId)
+    {
+        var result = replaceFromMap(original, replacementRules);
+
+        if (dimensionId != null && dimensionReplacementRules != null && !dimensionReplacementRules.isEmpty())
+        {
+            var dimensionRules = dimensionReplacementRules.get(dimensionId);
+            if (dimensionRules != null)
+                result = replaceFromMap(original, dimensionRules);
+        }
+
+        return result;
     }
     
     private static Holder<Biome> replaceFromMap(Holder<Biome> original, Map<Holder<Biome>, Holder<Biome>> rules)
