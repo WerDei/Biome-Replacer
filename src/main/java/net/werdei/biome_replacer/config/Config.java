@@ -97,7 +97,7 @@ public class Config
             writer.println("! Remove the leading '!' to activate examples below.");
             writer.println("!");
             writer.println("! Global rules (apply to every dimension):");
-            writer.println("! minecraft:forest > minecraft:tundra");
+            writer.println("! minecraft:forest > minecraft:snowy_tundra");
             writer.println("!");
             writer.println("! Rules under a header apply only to the world (dimension) in brackets");
             writer.println("! [minecraft:overworld]");
