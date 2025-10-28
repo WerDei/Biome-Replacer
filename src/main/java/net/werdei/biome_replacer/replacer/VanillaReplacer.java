@@ -43,14 +43,23 @@ public class VanillaReplacer
         
         if (dimensionReplacementRules != null && !dimensionReplacementRules.isEmpty())
         {
+            Map<String, List<Integer>> ruleLinesByDimension = new HashMap<>();
+            for (var rule : Config.rules)
+            {
+                var dimension = rule.dimension();
+                if (dimension != null)
+                    ruleLinesByDimension.computeIfAbsent(dimension, __ -> new ArrayList<>()).add(rule.line());
+            }
+
             for (var dimId : dimensionReplacementRules.keySet())
             {
                 if (!knownDimensions.contains(dimId))
                 {
-                    for (var rule : Config.rules)
+                    var offendingLines = ruleLinesByDimension.get(dimId);
+                    if (offendingLines != null)
                     {
-                        if (dimId.equals(rule.dimension()))
-                            BiomeReplacer.logRuleWarning(rule.line(), String.format("Dimension '%s' does not exist, ignoring rule", dimId));
+                        for (int line : offendingLines)
+                            BiomeReplacer.logRuleWarning(line, String.format("Dimension '%s' does not exist, ignoring rule", dimId));
                     }
                 }
             }
@@ -193,16 +202,19 @@ public class VanillaReplacer
 
     public static Holder<Biome> replaceIfNeeded(Holder<Biome> original, String dimensionId)
     {
-        var result = replaceFromMap(original, replacementRules);
+        if (dimensionId == null || dimensionReplacementRules == null || dimensionReplacementRules.isEmpty())
+            return replaceFromMap(original, replacementRules);
 
-        if (dimensionId != null && dimensionReplacementRules != null && !dimensionReplacementRules.isEmpty())
-        {
-            var dimensionRules = dimensionReplacementRules.get(dimensionId);
-            if (dimensionRules != null)
-                result = replaceFromMap(result, dimensionRules);
-        }
+        var dimensionRules = dimensionReplacementRules.get(dimensionId);
+        if (dimensionRules == null || dimensionRules.isEmpty())
+            return replaceFromMap(original, replacementRules);
 
-        return result;
+        if (replacementRules == null || replacementRules.isEmpty())
+            return replaceFromMap(original, dimensionRules);
+
+        var merged = new HashMap<Holder<Biome>, Holder<Biome>>(replacementRules);
+        merged.putAll(dimensionRules);
+        return replaceFromMap(original, merged);
     }
     
     private static Holder<Biome> replaceFromMap(Holder<Biome> original, Map<Holder<Biome>, Holder<Biome>> rules)
