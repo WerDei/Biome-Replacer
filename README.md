@@ -69,7 +69,7 @@ minecraft:desert > null
 or
 ```
 [custom:dimension]
- minecraft:desert > minecraft:badlands
+minecraft:desert > minecraft:badlands
 ```
 
 
