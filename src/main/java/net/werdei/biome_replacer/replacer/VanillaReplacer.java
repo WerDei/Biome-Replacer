@@ -92,7 +92,7 @@ public class VanillaReplacer
             }
             for (var value : parameters.values())
             {
-                var newBiome = replaceFromMap(value.getSecond(), effectiveRules);
+                var newBiome = applyRules(value.getSecond(), effectiveRules);
                 if (newBiome == null) continue;
                 newParameterList.add(new Pair<>(value.getFirst(), newBiome));
             }
@@ -188,10 +188,24 @@ public class VanillaReplacer
     
     public static Holder<Biome> replaceIfNeeded(Holder<Biome> original)
     {
-        return replacementRules.getOrDefault(original, original);
+        return applyRules(original, replacementRules);
+    }
+
+    public static Holder<Biome> replaceIfNeeded(Holder<Biome> original, String dimensionId)
+    {
+        var result = applyRules(original, replacementRules);
+
+        if (dimensionId != null && dimensionReplacementRules != null && !dimensionReplacementRules.isEmpty())
+        {
+            var dimensionRules = dimensionReplacementRules.get(dimensionId);
+            if (dimensionRules != null)
+                result = applyRules(result, dimensionRules);
+        }
+
+        return result;
     }
     
-    private static Holder<Biome> replaceFromMap(Holder<Biome> original, Map<Holder<Biome>, Holder<Biome>> rules)
+    private static Holder<Biome> applyRules(Holder<Biome> original, Map<Holder<Biome>, Holder<Biome>> rules)
     {
         if (rules == null || rules.isEmpty()) return original;
         return rules.getOrDefault(original, original);
