@@ -60,7 +60,7 @@ public final class BlueprintReplacer
     private static Holder<Biome> originalSourceMarker(Registry<Biome> registry)
     {
         //? if >=1.21.2
-    return registry.get(ORIGINAL_SOURCE_MARKER_KEY).orElseThrow(() -> new IllegalStateException("Blueprint original source marker biome is missing"));
+    return registry.get(ORIGINAL_SOURCE_MARKER_KEY).orElseThrow(() -> new IllegalStateException("Blueprint original source marker biome is missing: " + ORIGINAL_SOURCE_MARKER_KEY));
         //? if <1.21.2
         /*return registry.getHolderOrThrow(ORIGINAL_SOURCE_MARKER_KEY);*/
     }
