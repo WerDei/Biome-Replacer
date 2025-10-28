@@ -22,6 +22,7 @@
 - **High availability:** From 1.18.2 up to the most current Minecraft version, all equally supported
 - **Negligible performance impact:** Runs only once on world start, does not slow down the generation
 - **Biome Tag support:** Replace entire biome categories at once
+- **Per Dimension overrides:** Target specific biomes in specific dimensions helpful for custom datapack dimensions
 - **TerraBlender integration:** Remove biomes from a mod that has no configuration of its own
 
 ## Caveats
@@ -29,7 +30,7 @@
 Please note that Biome Replacer **cannot change terrain shape**. This means that it's impossible 
 to change oceans to land, create ocean-only worlds, etc.
 
-The only currently supported biome library mod is TerraBlender, so you won't be able to change Biolith biomes, 
+The only currently supported biome libraries are TerraBlender & Blueprint, so you won't be able to change Biolith biomes, 
 for example. Still, BR should work fine alongside most world generation mods.
 
 ## Setup
@@ -58,6 +59,18 @@ Using biome tags is supported:
 <div align="center">
   <img src="https://raw.githubusercontent.com/WerDei/Biome-Replacer/master/readme-files/example-5.png" alt="Two forest types replaced by Desert">
 </div>
+
+To target specific dimensions, use headers in brackets: [minecraft:overworld], [mod:dimension]. [null] or [] means all dimensions.
+
+```
+[minecraft:overworld]
+minecraft:desert > null
+```
+or
+```
+[custom:dimension]
+ minecraft:desert > minecraft:badlands
+```
 
 
 it's possible to completely remove biomes using a "null" keyword. For example, these rules will remove Terralith's skylands:
