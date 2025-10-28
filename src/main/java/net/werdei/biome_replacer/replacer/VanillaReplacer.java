@@ -199,7 +199,7 @@ public class VanillaReplacer
         {
             var dimensionRules = dimensionReplacementRules.get(dimensionId);
             if (dimensionRules != null)
-                result = replaceFromMap(original, dimensionRules);
+                result = replaceFromMap(result, dimensionRules);
         }
 
         return result;
