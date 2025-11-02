@@ -24,6 +24,7 @@ public class Config
         {
             rules.clear();
             var lineCount = 0;
+            String currentHeader = null; // null header means global (applies to all dimensions)
             while (reader.hasNextLine())
             {
                 var line = reader.nextLine().trim();
@@ -33,6 +34,17 @@ public class Config
                 if (line.isEmpty() || line.startsWith("!") || line.startsWith("# "))
                     continue;
                 
+                // Headers: [namespace:path]. [] is treated as global
+                if (line.startsWith("[") && line.endsWith("]"))
+                {
+                    var headerContent = line.substring(1, line.length() - 1).trim();
+                    if (headerContent.isEmpty())
+                        currentHeader = null;
+                    else
+                        currentHeader = headerContent;
+                    continue;
+                }
+
                 // Options. Might be used later.
                 if (line.contains("="))
                     continue;
@@ -61,7 +73,7 @@ public class Config
 //                    logRuleIssue(lineCount, "Unexpected number format. If you wanted to add probability, make sure it's a valid number");
                 }
                 
-                rules.add(new Rule(lineCount, oldBiome, newBiome, probability));
+                rules.add(new Rule(lineCount, oldBiome, newBiome, probability, currentHeader));
             }
         }
         catch (IOException e)
@@ -94,7 +106,7 @@ public class Config
     }
     
     
-    public record Rule(int line, String from, String to, double probability)
+    public record Rule(int line, String from, String to, double probability, String dimension)
     {
         public Rule {
             probability = Math.max(0.0, Math.min(1.0, probability));

@@ -1,7 +1,5 @@
-- Fixed compatibility issue with some TerraBlender-based mods (vanilla biomes weren't always replaced)
-- As a side effect, we now have full TerraBlender support. It's now possible to replace or remove modded biomes added with it.
-  - You should still use mod configs whenever possible, but is now an option of you really want it
-- Removed chance-based biome replacement, since it was causing problems
-  - This feature *might* come back in the future, but I make no promises
-- Fixed missing logo on Forge
-- Ported to 1.19.3
+- Added support for Blueprint-based mods
+  - You can now replace or remove biomes from mods using the Blueprint biome library
+- Added per-dimension override support with headers
+  - Use [minecraft:overworld], [mod:dimension], or [null] to target specific dimensions
+  - Allows different replacement rules for different dimensions in the same world

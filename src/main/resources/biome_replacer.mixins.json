@@ -8,7 +8,9 @@
         "MultiNoiseBiomeSourceAccessor",
         "WorldStemMixin",
         "terrablender.ClimateParameterListMixin",
-        "terrablender.LevelUtilsMixin"
+    "terrablender.LevelUtilsMixin",
+    "blueprint.ModdedBiomeSourceMixin",
+        "blueprint.ModdedBiomeSlicesManagerMixin"
     ],
     "injectors": {
         "defaultRequire": 1
