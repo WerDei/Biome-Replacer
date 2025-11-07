@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import static net.werdei.biome_replacer.BiomeReplacer.logRuleWarning;
 
@@ -14,6 +15,9 @@ public class Config
 {
     public static final String FILE_NAME = "biome_replacer.properties";
     public static final String REMOVE_BIOME_KEYWORD = "null";
+    public static final Set<String> MARKER_BIOMES = Set.of(
+            "terrablender:deferred_placeholder",
+            "blueprint:original_source_marker");
 
     public static final List<Rule> rules = new ArrayList<>();
 
@@ -59,7 +63,10 @@ public class Config
                 var oldBiome = split[0].trim();
                 var newBiomeWithProbability = split[1].trim().split("\\s+", 2);
                 var newBiome = newBiomeWithProbability[0].trim();
-                
+
+                if (isRestrictedBiome(oldBiome, lineCount)) continue;
+                if (isRestrictedBiome(newBiome, lineCount)) continue;
+
                 double probability = 1.0;
                 if (newBiomeWithProbability.length > 1) try
                 {
@@ -103,6 +110,16 @@ public class Config
             throw new RuntimeException("Failed to create Biome Replacer config file: " + e.getMessage(), e);
         }
         return file;
+    }
+
+    private static boolean isRestrictedBiome(String biome, int lineCount)
+    {
+        if (MARKER_BIOMES.contains(biome))
+        {
+            logRuleWarning(lineCount, "'" + biome + "' is a marker biome, using it can lead to world corruption. Ignoring rule.");
+            return true;
+        }
+        return false;
     }
     
     

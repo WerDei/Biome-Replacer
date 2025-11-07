@@ -28,6 +28,10 @@ bin/
 
 *.DS_Store
 
+# linux
+
+*.directory
+
 # fabric
 
 run/
