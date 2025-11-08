@@ -1,7 +1,7 @@
 import org.gradle.internal.extensions.stdlib.capitalized
 
 plugins {
-	id("dev.architectury.loom") version "1.7.+"
+	id("dev.architectury.loom") version "1.13.+"
 	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
 
@@ -20,6 +20,7 @@ class ModData {
 
 class Dependencies {
 	val modmenuVersion = property("deps.modmenu_version")
+	val modmenuEnabled = modmenuVersion != "[VERSIONED]"
 	val fapiVersion = property("deps.fabric_api")
 	val mixinsquaredVersion = property("deps.mixinsquared")
 	val mixinExtrasVersion = property("deps.mixinextras")
@@ -107,10 +108,9 @@ dependencies {
 	when {
 		loader.isFabric -> {
 			modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-			if (mc.version != "1.19.3") // Having modmenu on 1.19.3 makes it download the second instance of Fabric loader?? whar
-				modRuntimeOnly("com.terraformersmc:modmenu:${deps.modmenuVersion}")
-			modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
-			include(implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-fabric:${deps.mixinsquaredVersion}")!!)!!)
+            include(implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-fabric:${deps.mixinsquaredVersion}")!!)!!)
+            modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${deps.fapiVersion}")
+            if (deps.modmenuEnabled) modRuntimeOnly("com.terraformersmc:modmenu:${deps.modmenuVersion}")
 		}
 		loader.isNeoforge -> {
 			"neoForge"("net.neoforged:neoforge:${findProperty("deps.neoforge")}")

@@ -32,7 +32,7 @@ stonecutter {
 		add("1.19.2", "fabric", "oldforge")
 
 		// Codename Gecko
-		// Works on 1.19.3, which is largely irrelevant was trivial to port to
+		// Works on 1.19.3, which is largely irrelevant but was trivial to port to
 		add("1.19.3", "fabric", "oldforge")
 
 		// Codename Hippo
@@ -41,7 +41,7 @@ stonecutter {
 		add("1.20.6", "fabric", "neoforge")
 
 		// Codename Minnow
-		// Works across 1.21.2 - 1.21.8
+		// Works across 1.21.2 - 1.21.10
 		add("1.21.4", "fabric", "neoforge")
 
 		vcsVersion = "1.21.4-fabric"
