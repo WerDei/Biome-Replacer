@@ -1,6 +1,6 @@
 package net.werdei.biome_replacer.mixin.blueprint;
 
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.biome.Biome;
@@ -33,7 +33,16 @@ public abstract class ModdedBiomeSourceMixin
         BlueprintReplacer.captureDimensionFor((BiomeSource) (Object) this);
     }
 
-    @ModifyReturnValue(method = {"getNoiseBiome", "m_203407_"}, at = @At("RETURN"), remap = false, require = 0)
+    @ModifyExpressionValue(
+            method = "getSlice",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lcom/teamabnormals/blueprint/core/util/BiomeUtil$ModdedBiomeProvider;getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;Lnet/minecraft/world/level/biome/BiomeSource;Lnet/minecraft/core/Registry;)Lnet/minecraft/core/Holder;",
+                    remap = false
+            ),
+            remap = false,
+            require = 0
+    )
     private Holder<Biome> biome_replacer$adjustBiome(Holder<Biome> biome)
     {
         return BlueprintReplacer.adjustBiome(biome, this.biomes, (BiomeSource) (Object) this);
