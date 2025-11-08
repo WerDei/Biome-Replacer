@@ -14,4 +14,5 @@ stonecutter tasks {
     }
     order("publishModrinth", ordering)
     order("publishCurseforge", ordering)
+    order("publishMods", ordering)
 }

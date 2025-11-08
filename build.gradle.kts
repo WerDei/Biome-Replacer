@@ -2,7 +2,7 @@ import org.gradle.internal.extensions.stdlib.capitalized
 
 plugins {
 	id("dev.architectury.loom") version "1.13.+"
-	id("me.modmuss50.mod-publish-plugin") version "0.8.4"
+	id("me.modmuss50.mod-publish-plugin") version "1.1.0"
 }
 
 class ModData {
