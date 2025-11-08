@@ -18,26 +18,25 @@
 ## Features
 
 - **Easy configuration:** Simple properties file with intuitive syntax
+- **Designed for datapacks** Configure Terralith or other worldgen packs with ease\*
+- **(Limited) mod integration:** Remove biomes from a mod that has no configuration of its own\*\*
 - **Server-side:** No client installation needed (unless you want to use it in singleplayer, of course!)
 - **High availability:** From 1.18.2 up to the most current Minecraft version, all equally supported
 - **Negligible performance impact:** Runs only once on world start, does not slow down the generation
-- **Biome Tag support:** Replace entire biome categories at once
-- **Per Dimension overrides:** Target specific biomes in specific dimensions helpful for custom datapack dimensions
-- **TerraBlender integration:** Remove biomes from a mod that has no configuration of its own
 
-## Caveats
-
-Please note that Biome Replacer **cannot change terrain shape**. This means that it's impossible 
+\*Please note that Biome Replacer **cannot change terrain shape**. This means that it's impossible 
 to change oceans to land, create ocean-only worlds, etc.
 
-The only currently supported biome libraries are TerraBlender & Blueprint, so you won't be able to change Biolith biomes, 
-for example. Still, BR should work fine alongside most world generation mods.
+\*\*The only currently supported biome libraries are TerraBlender & Blueprint, so you won't be able to change Biolith biomes, 
+for example. Still, BR should not break, and will work fine alongside most world generation mods.
 
 ## Setup
 
 1. Install the mod, then run your client/server once to generate configuration file
 2. Find `biome_replacer.properties` in the `config` folder
 3. Add your replacement rules (see examples below), then load up the world  
+
+If you made any mistakes, you will see warnings in chat. Check for typos in your biome IDs, and try again.
 
 Tip: on client, you don't deed to restart the game every time you change your rules, you can simply leave and enter the world again.
 
@@ -60,18 +59,6 @@ Using biome tags is supported:
   <img src="https://raw.githubusercontent.com/WerDei/Biome-Replacer/master/readme-files/example-5.png" alt="Two forest types replaced by Desert">
 </div>
 
-To target specific dimensions, use headers in brackets: [minecraft:overworld], [mod:dimension]. [null] or [] means all dimensions.
-
-```
-[minecraft:overworld]
-minecraft:desert > null
-```
-or
-```
-[custom:dimension]
-minecraft:desert > minecraft:badlands
-```
-
 
 it's possible to completely remove biomes using a "null" keyword. For example, these rules will remove Terralith's skylands:
 ```
@@ -84,11 +71,24 @@ You can also use a biome tag to achieve the same effect:
 ```
 #terralith:skylands > null
 ```
-Important: if you're not careful, using this method on biomes from vanilla and datapacks can cause crashes, 
-please **test thoroughly** before using it in a world you care about!
+Important: if you're not careful, using this method on biomes from vanilla and datapacks can cause crashes, or mess up biome distribution. 
+Please **test thoroughly** before using it in a world you care about!
 <div align="center">
   <img src="https://raw.githubusercontent.com/WerDei/Biome-Replacer/master/readme-files/example-6.png" alt="Sky Island is removed">
 </div>
+
+### Advanced features
+
+To target specific dimensions, use headers with dimension ID: `[mod:dimension]`. Rules following it will only be applied to a specified dimension.
+(Note that this typically isn't needed, unless you have custom dimensions that generate the same biomes, and you want to target only one of them)
+
+```
+[minecraft:overworld]
+minecraft:desert > null
+
+[custom:dimension]
+minecraft:desert > minecraft:badlands
+```
 
 ## Resources
 

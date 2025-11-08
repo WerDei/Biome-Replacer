@@ -96,7 +96,7 @@ dependencies {
 		}
 	})
 
-	// Jank for optional Biolith integration
+	// Jank for optional TerraBlender integration
 	optionalProp("deps.terrablender") {
 		val terraBlender = "com.github.glitchfiend:TerraBlender-${loader.loader}:${mc.version}-$it"
 		if (deps.terrablenderEnabled)

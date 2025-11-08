@@ -59,14 +59,20 @@ public class BiomeReplacer
     public static void showWarnings(ServerPlayer player)
     {
         if (unshownWarnings.isEmpty()) return;
-        
-        unshownWarnings.sort(Comparator.comparingInt(w -> w.line));
-        //TODO crashes on 1.18.2 due to ServerPlayer.sendSystemMessage() not existing
-        player.sendSystemMessage(Component.literal("§6[BiomeReplacer] There are issues in the configuration file:"));
-        for (var warning : unshownWarnings)
+        try
         {
-            player.sendSystemMessage(Component.literal(String.format(
-                    "§6Line %s:§r %s", warning.line, warning.message)));
+            unshownWarnings.sort(Comparator.comparingInt(w -> w.line));
+            player.sendSystemMessage(Component.literal("§6[BiomeReplacer] There are issues in the configuration file:"));
+            for (var warning : unshownWarnings)
+            {
+                player.sendSystemMessage(Component.literal(String.format(
+                        "§6Line %s:§r %s", warning.line, warning.message)));
+            }
+        }
+        catch (NoSuchMethodError e)
+        {
+            // ServerPlayer.sendSystemMessage() and Component.literal() don't exist before 1.19
+            logWarn("Failed to show config warnings in chat, you're probably running 1.18.2 where it's not supported.");
         }
         unshownWarnings.clear();
     }
