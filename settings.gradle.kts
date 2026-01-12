@@ -11,7 +11,7 @@ pluginManagement {
 }
 
 plugins {
-	id("dev.kikugie.stonecutter") version "0.7"
+	id("dev.kikugie.stonecutter") version "0.8.2"
 }
 
 stonecutter {
@@ -20,7 +20,7 @@ stonecutter {
 
 	shared {
 		fun add(minecraft: String, vararg loaders: String) =
-            loaders.forEach { loader -> vers("$minecraft-$loader", minecraft) }
+            loaders.forEach { loader -> version("$minecraft-$loader", minecraft) }
 
 		// It's a good practice to append MC version to your mod's version, but since our builds work across
 		// multiple Minecraft versions, it might be confusing to see, like, version 2.0-mc1.19.4 working on 1.21.
@@ -43,6 +43,10 @@ stonecutter {
 		// Codename Minnow
 		// Works across 1.21.2 - 1.21.10
 		add("1.21.4", "fabric", "neoforge")
+
+        // Codename Pinkeen
+        // Works on 1.21.11, needed because of a "ResourceLocation" rename (mysteriously, does not affect Fabric)
+		add("1.21.11", "neoforge")
 
 		vcsVersion = "1.21.4-fabric"
 	}

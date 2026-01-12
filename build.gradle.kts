@@ -56,6 +56,12 @@ stonecutter {
 	constants["neoforge"] = loader.isNeoforge
 	constants["oldforge"] = loader.isOldforge
 	constants["forge-like"] = loader.isForgeLike
+
+    // 1.21.11 "ResourceLocation" rename
+    replacements.string(current.parsed >= "1.21.11") {
+        replace("ResourceLocation", "Identifier")
+        replace(".location()", ".identifier()")
+    }
 }
 
 loom {

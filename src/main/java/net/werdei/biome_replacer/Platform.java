@@ -20,7 +20,7 @@ import net.minecraftforge.fml.loading.LoadingModList;
 *///?}
 
 //? if forge-like
-/*@Mod(value = "biome_replacer")*/
+//@Mod(value = "biome_replacer")
 public class Platform /*? if fabric {*/ implements ModInitializer /*?}*/
 {
     //? if fabric {
@@ -41,7 +41,7 @@ public class Platform /*? if fabric {*/ implements ModInitializer /*?}*/
         //? if fabric
         return FabricLoader.getInstance().getConfigDir().resolve(Config.FILE_NAME).toFile();
         //? if forge-like
-        /*return FMLPaths.CONFIGDIR.get().resolve(Config.FILE_NAME).toFile();*/
+        //return FMLPaths.CONFIGDIR.get().resolve(Config.FILE_NAME).toFile();
     }
     
     public static boolean isModLoaded(String modId)
