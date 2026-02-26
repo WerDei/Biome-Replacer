@@ -1,0 +1,135 @@
+name: Bug report
+description: Report an issue about Biome Replacer
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: checkboxes
+    attributes:
+      label: Duplicate check
+      description: Reports that are duplicates will be closed without response.
+      options:
+        - label: I have searched existing issues and confirm this is not a duplicate.
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How do we reproduce the issue?
+      placeholder: |
+        1. Go to '...'
+        2. Do '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened instead.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: vanilla
+    attributes:
+      label: Reproducible in a new/vanilla world?
+      description: Note that Biome Replacer should not be used on existing worlds.
+      options:
+        - "Yes"
+        - "No"
+        - Not applicable
+    validations:
+      required: true
+
+  - type: input
+    id: mc-version
+    attributes:
+      label: Minecraft version
+    validations:
+      required: true
+
+  - type: input
+    id: mod-version
+    attributes:
+      label: Biome Replacer version
+    validations:
+      required: true
+
+  - type: input
+    id: modloader
+    attributes:
+      label: Mod loader + version
+      placeholder: "e.g. Fabric 0.15.11"
+    validations:
+      required: true
+
+  - type: input
+    id: java
+    attributes:
+      label: Java version
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Biome Replacer config
+      description: Found in `.minecraft/config/biome_replacer.properties`.
+      render: properties
+    validations:
+      required: true
+
+  - type: textarea
+    id: modlist
+    attributes:
+      label: Mod list (if applicable)
+      render: shell
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / crash reports
+      description: |
+        Please attach the relevant files from `.minecraft/logs/` and `.minecraft/crash-reports/`.
+        - `latest.log` (required)
+        - `debug.log` (if available)
+        - Crash report from `crash-reports/` (if a crash occurred)
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or videos
+      description: If applicable, add screenshots or a video to help explain your problem.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
