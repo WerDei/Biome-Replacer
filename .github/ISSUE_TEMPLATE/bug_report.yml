@@ -4,11 +4,20 @@ title: "[Bug] "
 labels: ["bug"]
 body:
   - type: checkboxes
+    id: pre-submit-checks
     attributes:
-      label: Duplicate check
-      description: Reports that are duplicates will be closed without response.
+      label: Pre-submit checks
+      description: Please confirm the following before submitting.
       options:
-        - label: I have searched existing issues and confirm this is not a duplicate.
+        - label: I have searched existing open and closed issues and confirm this is not a duplicate.
+          required: true
+        - label: I have confirmed that the biome names and biome tags in the config are not misspelled.
+          required: true
+        - label: I can reproduce this issue.
+          required: true
+        - label: I have read the description of the mod page and applied the formatting rules to the best of my ability.
+          required: true
+        - label: I have done basic checks first and still believe this is an issue with Biome Replacer.
           required: true
 
   - type: textarea
