@@ -11,7 +11,7 @@ pluginManagement {
 }
 
 plugins {
-	id("dev.kikugie.stonecutter") version "0.8.2"
+	id("dev.kikugie.stonecutter") version "0.9.5"
 }
 
 stonecutter {
@@ -47,6 +47,11 @@ stonecutter {
         // Codename Pinkeen
         // Works on 1.21.11, needed because of a "ResourceLocation" rename (mysteriously, does not affect Fabric)
 		add("1.21.11", "neoforge")
+
+		// Codename Newt
+		// Works across 26.1 - 26.1.2
+		version("26.1.2-fabric", "26.1.2").buildscript("unobfuscated.gradle.kts")
+		version("26.1.2-neoforge", "26.1.2").buildscript("unobfuscated.gradle.kts")
 
 		vcsVersion = "1.21.4-fabric"
 	}

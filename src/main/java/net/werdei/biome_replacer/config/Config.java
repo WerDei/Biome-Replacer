@@ -67,20 +67,13 @@ public class Config
                 if (isRestrictedBiome(oldBiome, lineCount)) continue;
                 if (isRestrictedBiome(newBiome, lineCount)) continue;
 
-                double probability = 1.0;
-                if (newBiomeWithProbability.length > 1) try
+                if (newBiomeWithProbability.length > 1)
                 {
-                    logRuleWarning(lineCount, "Chance-based replacement was removed from the mod (for now), probability will be ignored");
-                    probability = Double.parseDouble(newBiomeWithProbability[1].trim());
-//                    if (probability < 0.0 || probability > 1.0)
-//                        logRuleIssue(lineCount, "Probability will be clamped between 0 and 1");
-                }
-                catch (NumberFormatException e)
-                {
-//                    logRuleIssue(lineCount, "Unexpected number format. If you wanted to add probability, make sure it's a valid number");
+                    logRuleWarning(lineCount, "Chance-based replacement was removed from the mod (for now), ignoring rule");
+                    continue;
                 }
                 
-                rules.add(new Rule(lineCount, oldBiome, newBiome, probability, currentHeader));
+                rules.add(new Rule(lineCount, oldBiome, newBiome, 1.0, currentHeader));
             }
         }
         catch (IOException e)

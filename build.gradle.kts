@@ -56,6 +56,7 @@ stonecutter {
 	constants["neoforge"] = loader.isNeoforge
 	constants["oldforge"] = loader.isOldforge
 	constants["forge-like"] = loader.isForgeLike
+	constants["unobfuscated"] = false
 
     // 1.21.11 "ResourceLocation" rename
     replacements.string(current.parsed >= "1.21.11") {
@@ -151,6 +152,7 @@ tasks.processResources {
 		put("name", mod.name)
 		put("version", mod.versionWithCodename)
 		put("minecraft", mc.dep)
+		put("fabricLoader", ">=0.16")
 		put("description", mod.description)
 		put("source", mod.source)
 		put("issues", mod.issues)

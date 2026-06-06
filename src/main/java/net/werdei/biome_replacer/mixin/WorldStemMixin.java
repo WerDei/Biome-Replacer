@@ -3,6 +3,9 @@ package net.werdei.biome_replacer.mixin;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.packs.resources.CloseableResourceManager;
+//? if unobfuscated
+/*import net.minecraft.world.level.storage.LevelDataAndDimensions;
+*///? if !unobfuscated
 import net.minecraft.world.level.storage.WorldData;
 import net.werdei.biome_replacer.BiomeReplacer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,7 +24,15 @@ import net.minecraft.core.RegistryAccess;
 @Mixin(WorldStem.class)
 public abstract class WorldStemMixin
 {
-    //? if >=1.19.3 {
+    //? if unobfuscated {
+    /*@Inject(method = "<init>", at = @At("TAIL"))
+    private void onStemCreated(CloseableResourceManager closeableResourceManager, ReloadableServerResources reloadableServerResources, LayeredRegistryAccess<RegistryLayer> layeredRegistryAccess, LevelDataAndDimensions.WorldDataAndGenSettings worldData, CallbackInfo ci)
+    {
+        var registryAccess = layeredRegistryAccess.compositeAccess();
+        BiomeReplacer.doReplacement(registryAccess.lookupOrThrow(Registries.BIOME), registryAccess.lookupOrThrow(Registries.LEVEL_STEM));
+    }
+
+    *///?} else if >=1.19.3 {
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onStemCreated(CloseableResourceManager closeableResourceManager, ReloadableServerResources reloadableServerResources, LayeredRegistryAccess<RegistryLayer> layeredRegistryAccess, WorldData worldData, CallbackInfo ci)
     {
