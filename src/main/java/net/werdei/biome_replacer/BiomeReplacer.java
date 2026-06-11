@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.werdei.biome_replacer.config.Config;
+import net.werdei.biome_replacer.replacer.BlueprintReplacer;
 import net.werdei.biome_replacer.replacer.VanillaReplacer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +32,7 @@ public class BiomeReplacer
     public static void doReplacement(Registry<Biome> biomeRegistry, Registry<LevelStem> stemRegistry)
     {
         Config.reload();
+        BlueprintReplacer.reset();
         VanillaReplacer.doReplacement(biomeRegistry, stemRegistry);
     }
     

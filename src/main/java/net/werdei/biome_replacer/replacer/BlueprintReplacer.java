@@ -26,6 +26,12 @@ public final class BlueprintReplacer
 
     private BlueprintReplacer() {}
 
+    // Drop biome sources left over from the previous world.
+    public static void reset()
+    {
+        DIMENSION_BY_SOURCE.clear();
+    }
+
     public static void pushDimensionContext(String dimensionId)
     {
         if (dimensionId == null || dimensionId.isEmpty())
