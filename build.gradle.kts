@@ -1,7 +1,7 @@
 import org.gradle.internal.extensions.stdlib.capitalized
 
 plugins {
-	id("dev.architectury.loom") version "1.13.+"
+	id("dev.architectury.loom") version "1.17.+"
 	id("me.modmuss50.mod-publish-plugin") version "1.1.0"
 }
 

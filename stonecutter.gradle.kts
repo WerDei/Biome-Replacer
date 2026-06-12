@@ -1,7 +1,7 @@
 plugins {
     id("dev.kikugie.stonecutter")
 }
-stonecutter active "1.21.4-fabric" /* [SC] DO NOT EDIT */
+stonecutter active "26.1.2-fabric" /* [SC] DO NOT EDIT */
 
 stonecutter tasks {
     // Order by version, and then by loader

@@ -4,9 +4,9 @@ import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.packs.resources.CloseableResourceManager;
 //? if unobfuscated
-/*import net.minecraft.world.level.storage.LevelDataAndDimensions;
-*///? if !unobfuscated
-import net.minecraft.world.level.storage.WorldData;
+import net.minecraft.world.level.storage.LevelDataAndDimensions;
+//? if !unobfuscated
+//import net.minecraft.world.level.storage.WorldData;
 import net.werdei.biome_replacer.BiomeReplacer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,25 +25,25 @@ import net.minecraft.core.RegistryAccess;
 public abstract class WorldStemMixin
 {
     //? if unobfuscated {
-    /*@Inject(method = "<init>", at = @At("TAIL"))
-    private void onStemCreated(CloseableResourceManager closeableResourceManager, ReloadableServerResources reloadableServerResources, LayeredRegistryAccess<RegistryLayer> layeredRegistryAccess, LevelDataAndDimensions.WorldDataAndGenSettings worldData, CallbackInfo ci)
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void onStemCreated(CloseableResourceManager resourceManager, ReloadableServerResources dataPackResources, LayeredRegistryAccess<RegistryLayer> registries, LevelDataAndDimensions.WorldDataAndGenSettings worldDataAndGenSettings, CallbackInfo ci)
     {
-        var registryAccess = layeredRegistryAccess.compositeAccess();
+        var registryAccess = registries.compositeAccess();
         BiomeReplacer.doReplacement(registryAccess.lookupOrThrow(Registries.BIOME), registryAccess.lookupOrThrow(Registries.LEVEL_STEM));
     }
 
-    *///?} else if >=1.19.3 {
-    @Inject(method = "<init>", at = @At("TAIL"))
+    //?} else if >=1.19.3 {
+    /*@Inject(method = "<init>", at = @At("TAIL"))
     private void onStemCreated(CloseableResourceManager closeableResourceManager, ReloadableServerResources reloadableServerResources, LayeredRegistryAccess<RegistryLayer> layeredRegistryAccess, WorldData worldData, CallbackInfo ci)
     {
         var registryAccess = layeredRegistryAccess.compositeAccess();
         //? if >=1.21.2
         BiomeReplacer.doReplacement(registryAccess.lookupOrThrow(Registries.BIOME), registryAccess.lookupOrThrow(Registries.LEVEL_STEM));
         //? if <1.21.2
-        /*BiomeReplacer.doReplacement(registryAccess.registryOrThrow(Registries.BIOME), registryAccess.registryOrThrow(Registries.LEVEL_STEM));*/
+        /^BiomeReplacer.doReplacement(registryAccess.registryOrThrow(Registries.BIOME), registryAccess.registryOrThrow(Registries.LEVEL_STEM));^/
     }
 
-    //?} else {
+    *///?} else {
     /*@Inject(method = "<init>", at = @At("TAIL"))
     private void onStemCreated(CloseableResourceManager closeableResourceManager, ReloadableServerResources reloadableServerResources, RegistryAccess.Frozen frozen, WorldData worldData, CallbackInfo ci)
     {

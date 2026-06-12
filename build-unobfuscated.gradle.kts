@@ -58,7 +58,13 @@ repositories {
 }
 
 if (isFabric) {
-	extensions.configure<LoomGradleExtensionAPI>("loom") {
+	extensions.configure<LoomGradleExtensionAPI>("loom")
+	{
+		runConfigs.all {
+			ideConfigGenerated(false)
+			runDir = "../../run"
+		}
+
 		mods {
 			register(modId) {
 				sourceSet(sourceSets.main.get())
@@ -164,6 +170,22 @@ publishMods {
 		projectId = project.property("publish.curseforge").toString()
 		accessToken = findProperty("curseforge_token").toString()
 		mcTargets.forEach(minecraftVersions::add)
+	}
+}
+
+
+if (stonecutter.current.isActive) {
+	rootProject.tasks.register("Build active project") {
+		group = "stonecutter"
+		dependsOn(tasks.named("build"))
+	}
+	rootProject.tasks.register("Run active Client") {
+		group = "stonecutter"
+		dependsOn(tasks.named("runClient"))
+	}
+	rootProject.tasks.register("Run active Server") {
+		group = "stonecutter"
+		dependsOn(tasks.named("runServer"))
 	}
 }
 

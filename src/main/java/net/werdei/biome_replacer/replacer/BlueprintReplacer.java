@@ -2,7 +2,7 @@ package net.werdei.biome_replacer.replacer;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.core.Holder;
@@ -17,9 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class BlueprintReplacer
 {
     //? if >=1.19.3
-    private static final ResourceKey<Biome> ORIGINAL_SOURCE_MARKER_KEY = ResourceKey.create(Registries.BIOME, Objects.requireNonNull(ResourceLocation.tryParse("blueprint:original_source_marker")));
+    private static final ResourceKey<Biome> ORIGINAL_SOURCE_MARKER_KEY = ResourceKey.create(Registries.BIOME, Objects.requireNonNull(Identifier.tryParse("blueprint:original_source_marker")));
     //? if <1.19.3
-    /*private static final ResourceKey<Biome> ORIGINAL_SOURCE_MARKER_KEY = ResourceKey.create(Registry.BIOME_REGISTRY, Objects.requireNonNull(ResourceLocation.tryParse("blueprint:original_source_marker")));*/
+    /*private static final ResourceKey<Biome> ORIGINAL_SOURCE_MARKER_KEY = ResourceKey.create(Registry.BIOME_REGISTRY, Objects.requireNonNull(Identifier.tryParse("blueprint:original_source_marker")));*/
 
     private static final Map<BiomeSource, String> DIMENSION_BY_SOURCE = new ConcurrentHashMap<>();
     private static final ThreadLocal<String> DIMENSION_CONTEXT = new ThreadLocal<>();

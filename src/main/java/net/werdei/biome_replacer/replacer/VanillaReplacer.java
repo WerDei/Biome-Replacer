@@ -5,7 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
@@ -41,7 +41,7 @@ public class VanillaReplacer
 
         var knownDimensions = new HashSet<String>();
         for (var entry : stemRegistry.entrySet())
-            knownDimensions.add(entry.getKey().location().toString());
+            knownDimensions.add(entry.getKey().identifier().toString());
 
         if (!dimensionReplacementRules.isEmpty())
         {
@@ -69,7 +69,7 @@ public class VanillaReplacer
         
         for (var levelStem : stemRegistry.entrySet())
         {
-            var levelId = levelStem.getKey().location();
+            var levelId = levelStem.getKey().identifier();
             var level = levelStem.getValue();
             
             if (!(level.generator() instanceof NoiseBasedChunkGenerator generator)
@@ -201,7 +201,7 @@ public class VanillaReplacer
     
     private static ResourceKey<Biome> getBiomeResourceKey(String id) throws Exception
     {
-        var resourceLocation = ResourceLocation.tryParse(id);
+        var resourceLocation = Identifier.tryParse(id);
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome ID '%s'", id));
         //? if >=1.19.3
@@ -212,7 +212,7 @@ public class VanillaReplacer
     
     private static TagKey<Biome> getBiomeTagKey(String id) throws Exception
     {
-        var resourceLocation = ResourceLocation.tryParse(id);
+        var resourceLocation = Identifier.tryParse(id);
         if (resourceLocation == null)
             throw new Exception(String.format("Invalid biome tag '#%s'", id));
         //? if >=1.19.3

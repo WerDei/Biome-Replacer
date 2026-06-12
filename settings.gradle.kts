@@ -12,6 +12,8 @@ pluginManagement {
 
 plugins {
 	id("dev.kikugie.stonecutter") version "0.9.5"
+	// Intellij's suggestion. Couldn't find my java without it for some reason
+	id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 stonecutter {
@@ -20,7 +22,13 @@ stonecutter {
 
 	shared {
 		fun add(minecraft: String, vararg loaders: String) =
-            loaders.forEach { loader -> version("$minecraft-$loader", minecraft) }
+            loaders.forEach { loader ->
+				// Conveniently, Mojang moved from 1.x versions at the same time they removed obfuscation
+				if (minecraft.startsWith("1."))
+                	version("$minecraft-$loader", minecraft)
+				else
+					version("$minecraft-$loader", minecraft).buildscript("build-unobfuscated.gradle.kts")
+            }
 
 		// It's a good practice to append MC version to your mod's version, but since our builds work across
 		// multiple Minecraft versions, it might be confusing to see, like, version 2.0-mc1.19.4 working on 1.21.
@@ -50,10 +58,9 @@ stonecutter {
 
 		// Codename Newt
 		// Works across 26.1 - 26.1.2
-		version("26.1.2-fabric", "26.1.2").buildscript("unobfuscated.gradle.kts")
-		version("26.1.2-neoforge", "26.1.2").buildscript("unobfuscated.gradle.kts")
+		add("26.1.2", "fabric", "neoforge")
 
-		vcsVersion = "1.21.4-fabric"
+		vcsVersion = "26.1.2-fabric"
 	}
 	create(rootProject)
 }
