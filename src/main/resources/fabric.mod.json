@@ -40,7 +40,7 @@
 		"${id}.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.16",
+		"fabricloader": "${fabricLoader}",
 		"minecraft": "${minecraft}"
 	},
 	"custom": {
