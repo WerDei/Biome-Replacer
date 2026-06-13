@@ -5,7 +5,7 @@
   "package": "net.werdei.biome_replacer.mixin",
   "plugin": "net.werdei.biome_replacer.MixinPlugin",
   "mixins": [
-    "MultiNoiseBiomeSourceAccessor",
+    "MultiNoiseBiomeSourceMixin",
     "ServerPlayerMixin",
     "WorldStemMixin",
     "blueprint.ModdedBiomeSlicesManagerMixin",
