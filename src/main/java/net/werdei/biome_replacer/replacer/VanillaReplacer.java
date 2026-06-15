@@ -1,6 +1,5 @@
 package net.werdei.biome_replacer.replacer;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -14,7 +13,6 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.werdei.biome_replacer.BiomeReplacer;
 import net.werdei.biome_replacer.config.Config;
-import net.werdei.biome_replacer.mixin.MultiNoiseBiomeSourceAccessor;
 //? if >=1.19.3 {
 import net.minecraft.core.registries.Registries;
 //?}
@@ -87,12 +85,8 @@ public class VanillaReplacer
                 continue;
             }
 
-            var biomeSource = (MultiNoiseBiomeSourceAccessor) generator.getBiomeSource();
-
-            //? if >=1.19.4
-            var parameters = biomeSource.getParameters().map((p) -> p, (holder) -> holder.value().parameters());
-            //? if <1.19.4
-            /*var parameters = biomeSource.getParameters();*/
+            var biomeSource = (MultiNoiseBiomeSourceExtension) generator.getBiomeSource();
+            var parameters = biomeSource.biome_replacer$getParameters();
 
             List<Pair<Climate.ParameterPoint, Holder<Biome>>> newParameterList = new ArrayList<>();
             var changed = false;
@@ -118,10 +112,7 @@ public class VanillaReplacer
                 continue;
             }
 
-            //? if >=1.19.4
-            biomeSource.setParameters(Either.left(new Climate.ParameterList<>(newParameterList)));
-            //? if <1.19.4
-            /*biomeSource.setParameters(new Climate.ParameterList<>(newParameterList));*/
+            biomeSource.biome_replacer$setParameters(new Climate.ParameterList<>(newParameterList));
 
             BiomeReplacer.log("Successfully replaced biomes in " + levelId);
 
