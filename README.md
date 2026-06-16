@@ -43,6 +43,8 @@ for example. Still, BR should not break, and will work fine alongside most world
 3. Add your replacement rules (see examples below), then load up the world  
 
 If you made any mistakes, you will see warnings in chat. Check for typos in your biome IDs, and try again.
+If you still have issues, check out our [troubleshooting guide](https://github.com/WerDei/Biome-Replacer/blob/master/docs/TROUBLESHOOTING.md)
+for solutions to common mistakes.
 
 Tip: on client, you don't deed to restart the game every time you change your rules, you can simply leave and enter the world again.
 
