@@ -3,11 +3,17 @@
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/modrinth/dt/biome-replacer?style=flat&logo=modrinth&logoColor=%2300AF5C&label=Modrinth&color=%2300AF5C&link=https%3A%2F%2Fmodrinth.com%2Fmod%2Fbiome-replacer" alt="Modrinth Downloads">
-  <img src="https://img.shields.io/curseforge/dt/910274?style=flat&logo=CurseForge&logoColor=%23F16436&label=CurseForge&color=%23F16436&link=https%3A%2F%2Fwww.curseforge.com%2Fminecraft%2Fmc-mods%2Fbiome-replacer" alt="CurseForge Downloads">
+  <a href="https://modrinth.com/mod/biome-replacer" target="_blank">
+    <img src="https://img.shields.io/modrinth/dt/biome-replacer?style=flat&logo=modrinth&logoColor=%2300AF5C&label=Modrinth&color=%2300AF5C" alt="Modrinth Downloads">
+  </a>
+  <a href="https://www.curseforge.com/minecraft/mc-mods/biome-replacer" target="_blank">
+    <img src="https://img.shields.io/curseforge/dt/910274?style=flat&logo=CurseForge&logoColor=%23F16436&label=CurseForge&color=%23F16436" alt="CurseForge Downloads">
+  </a>
   <img src="https://img.shields.io/badge/MC-1.18.2+-green?style=flat&logo=minecraft&logoColor=white" alt="Minecraft Versions">
   <img src="https://img.shields.io/badge/Side-Server-orange?style=flat" alt="Server Side">
-  <img src="https://img.shields.io/github/license/WerDei/Biome-Replacer?style=flat&color=purple" alt="License">
+  <a href="https://github.com/WerDei/Biome-Replacer/blob/master/LICENSE" target="_blank">
+    <img src="https://img.shields.io/badge/License-MIT-purple?style=flat" alt="License">
+  </a>
   <a href="https://discord.gg/z3h4d3Ux3p" target="_blank">
       <img src="https://img.shields.io/discord/1206800378486726716?style=flat&logo=Discord&label=Unofficial%20Discord&color=%235765F2" alt="Discord">
   </a>
@@ -93,6 +99,8 @@ minecraft:desert > minecraft:badlands
 ## Resources
 
 * [Report bugs and issues here](https://github.com/WerDei/Biome-Replacer/issues)
-* [Vanilla Biome Tags](https://mcreator.net/wiki/minecraft-biome-tags-list)
+* [Troubleshooting guide](https://github.com/WerDei/Biome-Replacer/blob/master/docs/TROUBLESHOOTING.md)
+* [Migration & recovery instructions](https://github.com/WerDei/Biome-Replacer/blob/master/docs/RECOVERY-26.1.md)
+* [Vanilla Biome Tags](https://minecraft.wiki/w/Biome_tag_(Java_Edition))
 * [Vanilla Biome IDs](https://minecraft.wiki/w/Biome#Biome_IDs)
 * [Source code](https://github.com/WerDei/Biome-Replacer)
