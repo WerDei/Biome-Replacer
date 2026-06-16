@@ -183,7 +183,7 @@ Before asking for help:
 
 ## Still stuck?
 
-- Read the [README](README.md) for examples
+- Read the [README](../README.md) for examples
 - [Open a GitHub issue](https://github.com/WerDei/Biome-Replacer/issues) and include:
   - Minecraft version
   - Modloader (Fabric / Forge / NeoForge)
