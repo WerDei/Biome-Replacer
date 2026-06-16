@@ -98,9 +98,11 @@ minecraft:desert > minecraft:badlands
 
 ## Resources
 
-* [Report bugs and issues here](https://github.com/WerDei/Biome-Replacer/issues)
+
+
 * [Troubleshooting guide](https://github.com/WerDei/Biome-Replacer/blob/master/docs/TROUBLESHOOTING.md)
-* [Migration & recovery instructions](https://github.com/WerDei/Biome-Replacer/blob/master/docs/RECOVERY-26.1.md)
+* [Recover a corrupted 26.1 world](https://github.com/WerDei/Biome-Replacer/blob/master/docs/RECOVERY-26.1.md)
 * [Vanilla Biome Tags](https://minecraft.wiki/w/Biome_tag_(Java_Edition))
 * [Vanilla Biome IDs](https://minecraft.wiki/w/Biome#Biome_IDs)
+* [Report bugs and issues here](https://github.com/WerDei/Biome-Replacer/issues)
 * [Source code](https://github.com/WerDei/Biome-Replacer)
