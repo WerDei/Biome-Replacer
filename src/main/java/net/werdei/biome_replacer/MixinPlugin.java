@@ -1,5 +1,7 @@
 package net.werdei.biome_replacer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -9,11 +11,15 @@ import java.util.Set;
 
 public class MixinPlugin implements IMixinConfigPlugin
 {
+    private static final Logger LOGGER = LogManager.getLogger(MixinPlugin.class);
+    private static final String LOG_PREFIX = "[BiomeReplacer] MixinPlugin: {}";
     private static final String TERRABLENDER_ID = "terrablender";
     private static final String BLUEPRINT_ID = "blueprint";
+    
     private String ownPackage;
     private boolean terrablenderInstalled;
     private boolean blueprintInstalled;
+    
     
     @Override
     public void onLoad(String mixinPackage)
@@ -22,9 +28,9 @@ public class MixinPlugin implements IMixinConfigPlugin
         terrablenderInstalled = Platform.isModLoaded(TERRABLENDER_ID);
         blueprintInstalled = Platform.isModLoaded(BLUEPRINT_ID);
         if (terrablenderInstalled)
-            BiomeReplacer.log("TerraBlender detected, biome replacements will be injected into it");
+            LOGGER.info(LOG_PREFIX, "TerraBlender detected, biome replacements will be injected into it");
         if (blueprintInstalled)
-            BiomeReplacer.log("Blueprint detected, biome replacements will be injected into it");
+            LOGGER.info(LOG_PREFIX, "Blueprint detected, biome replacements will be injected into it");
     }
     
     @Override
