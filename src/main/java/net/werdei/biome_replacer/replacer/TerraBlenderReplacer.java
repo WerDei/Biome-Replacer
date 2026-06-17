@@ -19,7 +19,7 @@ public class TerraBlenderReplacer
         //? if >=1.21.2
         var placeholder = biomeRegistry.getOrThrow(Region.DEFERRED_PLACEHOLDER);
         //? if <1.21.2
-        /*var placeholder = biomeRegistry.getHolderOrThrow(Region.DEFERRED_PLACEHOLDER);*/
+        //var placeholder = biomeRegistry.getHolderOrThrow(Region.DEFERRED_PLACEHOLDER);
         
         return original.stream()
                 .map(pair -> pair.mapSecond(oldBiome -> {

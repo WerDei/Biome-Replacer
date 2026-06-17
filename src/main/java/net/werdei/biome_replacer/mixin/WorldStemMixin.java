@@ -40,7 +40,7 @@ public abstract class WorldStemMixin
         //? if >=1.21.2
         BiomeReplacer.doReplacement(registryAccess.lookupOrThrow(Registries.BIOME), registryAccess.lookupOrThrow(Registries.LEVEL_STEM));
         //? if <1.21.2
-        /^BiomeReplacer.doReplacement(registryAccess.registryOrThrow(Registries.BIOME), registryAccess.registryOrThrow(Registries.LEVEL_STEM));^/
+        //BiomeReplacer.doReplacement(registryAccess.registryOrThrow(Registries.BIOME), registryAccess.registryOrThrow(Registries.LEVEL_STEM));
     }
 
     *///?} else {

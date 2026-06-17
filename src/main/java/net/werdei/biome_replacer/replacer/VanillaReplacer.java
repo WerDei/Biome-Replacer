@@ -18,51 +18,26 @@ import net.minecraft.core.registries.Registries;
 //?}
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static net.werdei.biome_replacer.BiomeReplacer.log;
 
 public class VanillaReplacer
 {
     private static Map<Holder<Biome>, Holder<Biome>> replacementRules = Map.of();
-    private static Map<String, Map<Holder<Biome>, Holder<Biome>>> dimensionReplacementRules = Map.of();
-    // Used by Blueprint to avoid merging rules for every biome lookup.
     private static Map<String, Map<Holder<Biome>, Holder<Biome>>> mergedDimensionRules = Map.of();
 
     public static void doReplacement(Registry<Biome> biomeRegistry, Registry<LevelStem> stemRegistry)
     {
-        prepareRules(biomeRegistry);
-        if (replacementRules.isEmpty() && dimensionReplacementRules.isEmpty())
+        var knownDimensions = stemRegistry.entrySet().stream()
+                .map(steam -> steam.getKey().identifier().toString())
+                .collect(Collectors.toSet());
+        prepareRules(biomeRegistry, knownDimensions);
+        
+        if (replacementRules.isEmpty() && mergedDimensionRules.isEmpty())
         {
             BiomeReplacer.log("No rules found, not replacing anything");
             return;
-        }
-
-        var knownDimensions = new HashSet<String>();
-        for (var entry : stemRegistry.entrySet())
-            knownDimensions.add(entry.getKey().identifier().toString());
-
-        if (!dimensionReplacementRules.isEmpty())
-        {
-            Map<String, List<Integer>> ruleLinesByDimension = new HashMap<>();
-            for (var rule : Config.rules)
-            {
-                var dimension = rule.dimension();
-                if (dimension != null)
-                    ruleLinesByDimension.computeIfAbsent(dimension, __ -> new ArrayList<>()).add(rule.line());
-            }
-
-            for (var dimId : dimensionReplacementRules.keySet())
-            {
-                if (!knownDimensions.contains(dimId))
-                {
-                    var offendingLines = ruleLinesByDimension.get(dimId);
-                    if (offendingLines != null)
-                    {
-                        for (int line : offendingLines)
-                            BiomeReplacer.logRuleWarning(line, String.format("Dimension '%s' does not exist, ignoring rule", dimId));
-                    }
-                }
-            }
         }
         
         for (var levelStem : stemRegistry.entrySet())
@@ -77,7 +52,6 @@ public class VanillaReplacer
                 BiomeReplacer.log("Skipping " + levelId);
                 continue;
             }
-            
             var effectiveRules = mergedDimensionRules.getOrDefault(levelId.toString(), replacementRules);
             if (effectiveRules.isEmpty())
             {
@@ -119,19 +93,29 @@ public class VanillaReplacer
         }
     }
 
-    private static void prepareRules(Registry<Biome> biomeRegistry)
+    private static void prepareRules(Registry<Biome> biomeRegistry, Set<String> knownDimensions)
     {
         var globalRules = new HashMap<Holder<Biome>, Holder<Biome>>();
-        var perDimensionRules = new HashMap<String, Map<Holder<Biome>, Holder<Biome>>>();
+        var perDimensionRules = new HashMap<String, HashMap<Holder<Biome>, Holder<Biome>>>();
         var rulesDirect = 0;
         var rulesTag = 0;
         var rulesIgnored = 0;
         
         for (var rule : Config.rules) try
         {
-            Map<Holder<Biome>, Holder<Biome>> targetMap = rule.dimension() == null
-                    ? globalRules
-                    : perDimensionRules.computeIfAbsent(rule.dimension(), k -> new HashMap<>());
+            var targetMap = globalRules;
+            if (rule.dimension() != null)
+            {
+                // To catch invalid IDs and vanilla ones not starting with "minecraft:"
+                var dimensionId = Identifier.tryParse(rule.dimension());
+                if (dimensionId == null)
+                    throw new Exception(String.format("Invalid dimension ID '%s'", rule.dimension()));
+                if (!knownDimensions.contains(dimensionId.toString()))
+                    throw new Exception(String.format("Dimension '%s' does not exist", dimensionId));
+                //noinspection unused
+                targetMap = perDimensionRules.computeIfAbsent(dimensionId.toString(), s -> new HashMap<>());
+            }
+            
             if (rule.from().startsWith("#"))
             {
                 var tagKey = getBiomeTagKey(rule.from().substring(1));
@@ -167,7 +151,6 @@ public class VanillaReplacer
         }
 
         replacementRules = globalRules;
-        dimensionReplacementRules = perDimensionRules;
         mergedDimensionRules = merged;
 
         log(String.format("Loaded %d rules (%d direct, %d tag-based) and ignored %d",
@@ -184,7 +167,7 @@ public class VanillaReplacer
         //? if >=1.21.2
         var holder = registry.get(resourceKey);
         //? if <1.21.2
-        /*var holder = registry.getHolder(resourceKey);*/
+        //var holder = registry.getHolder(resourceKey);
         
         if (holder.isPresent()) return holder.get();
         throw new Exception(String.format("Biome '%s' does not exist", id));
