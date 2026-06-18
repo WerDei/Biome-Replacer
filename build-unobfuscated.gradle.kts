@@ -154,7 +154,8 @@ tasks.processResources {
 
 publishMods {
 	file = tasks.named<Jar>("jar").get().archiveFile
-	displayName = "$modVersion ${loader.replaceFirstChar { it.titlecase() }} ${mcTargets.first()}-${mcTargets.last()}"
+	var displayMcVersion = if (mcTargets.count() > 1) "${mcTargets.first()}-${mcTargets.last()}" else mcTargets.first();
+	displayName = "$modVersion ${loader.replaceFirstChar { it.titlecase() }} $displayMcVersion"
 	changelog = rootProject.file("CHANGELOG.md").readText()
 	type = BETA
 	modLoaders.add(loader)

@@ -186,7 +186,8 @@ tasks.processResources {
 
 publishMods {
 	file = project.tasks.remapJar.get().archiveFile
-	displayName = "${mod.version} ${loader.loader.capitalized()} ${mc.targets.first()}-${mc.targets.last()}"
+	var displayMcVersion = if (mc.targets.count() > 1) "${mc.targets.first()}-${mc.targets.last()}" else mc.targets.first();
+	displayName = "${mod.version} ${loader.loader.capitalized()} $displayMcVersion"
 	changelog = rootProject.file("CHANGELOG.md").readText()
 	type = BETA
 
