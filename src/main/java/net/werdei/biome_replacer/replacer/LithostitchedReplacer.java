@@ -115,8 +115,17 @@ public final class LithostitchedReplacer
     private static List<Pair<Identifier, BiomeInjector>> buildInjectors(RegistryAccess registries)
     {
         var result = new ArrayList<Pair<Identifier, BiomeInjector>>();
-        for (var stemKey : levelStems(registries).registryKeySet())
+        for (var levelStem : levelStems(registries).entrySet())
         {
+            var stemKey = levelStem.getKey();
+
+            //? if bclib {
+            // BCLib dimensions are replaced at lookup, an injector on top
+            // would apply the rules a second time
+            if (BCLibReplacer.claims(levelStem.getValue()))
+                continue;
+            //?}
+
             var dimensionId = stemKey.identifier().toString();
             var levelKey = ResourceKey.create(Registries.DIMENSION, stemKey.identifier());
             var registered = 0;

@@ -49,6 +49,14 @@ public class VanillaReplacer
             }
             //?}
 
+            //? if bclib {
+            if (BCLibReplacer.claims(level))
+            {
+                BiomeReplacer.log(levelId + " is managed through BCLib, its biomes are replaced at lookup");
+                continue;
+            }
+            //?}
+
             if (!(level.generator() instanceof NoiseBasedChunkGenerator generator))
             {
                 // We only manipulate noise parameters, every other generator gets skipped

@@ -6,6 +6,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.werdei.biome_replacer.config.Config;
+//? if bclib
+import net.werdei.biome_replacer.replacer.BCLibReplacer;
 //? if biolith
 import net.werdei.biome_replacer.replacer.BiolithReplacer;
 import net.werdei.biome_replacer.replacer.BlueprintReplacer;
@@ -43,6 +45,8 @@ public class BiomeReplacer
         // Biolith runs first, so it can hand dimensions back if its registration fails
         //? if biolith
         BiolithReplacer.doReplacement(stemRegistry);
+        //? if bclib
+        BCLibReplacer.doReplacement(stemRegistry);
         VanillaReplacer.doReplacement(stemRegistry);
     }
     

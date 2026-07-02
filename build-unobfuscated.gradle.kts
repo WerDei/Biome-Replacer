@@ -44,6 +44,8 @@ stonecutter {
 	constants["unobfuscated"] = true
 	constants["biolith"] = findProperty("deps.biolith_version") != null
 	constants["lithostitched"] = findProperty("deps.lithostitched_version") != null
+	// BCLib doesn't exist past Minecraft 1.21.1
+	constants["bclib"] = false
 
 	replacements.string(current.parsed >= "1.21.11") {
 		replace("ResourceLocation", "Identifier")

@@ -62,6 +62,8 @@ stonecutter {
 	constants["biolith"] = findProperty("deps.biolith_version") != null
 	// Only versions where Lithostitched has biome injectors (1.6+) get the integration
 	constants["lithostitched"] = findProperty("deps.lithostitched_version") != null
+	// BCLib only exists on Fabric up to 1.21.1, and is hooked by class name, so no dependency here
+	constants["bclib"] = loader.isFabric && current.parsed < "1.21.2"
 
     // 1.21.11 "ResourceLocation" rename
     replacements.string(current.parsed >= "1.21.11") {
