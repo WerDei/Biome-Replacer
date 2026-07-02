@@ -3,4 +3,5 @@ More information here:
 https://github.com/WerDei/Biome-Replacer/blob/master/docs/RECOVERY-26.1.md
 
 Changelog:
-- Added Biolith integration (on 1.20+): biomes from Biolith-based mods can now be replaced like any other
+- Added Biolith integration (on 1.20+): biomes from Biolith-based mods.
+- Added Lithostitched integration (on 1.21.1+): biomes from Lithostitched-based mods.

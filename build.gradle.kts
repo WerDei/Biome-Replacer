@@ -60,6 +60,8 @@ stonecutter {
 	constants["unobfuscated"] = false
 	// Only versions with a published Biolith artifact get the integration
 	constants["biolith"] = findProperty("deps.biolith_version") != null
+	// Only versions where Lithostitched has biome injectors (1.6+) get the integration
+	constants["lithostitched"] = findProperty("deps.lithostitched_version") != null
 
     // 1.21.11 "ResourceLocation" rename
     replacements.string(current.parsed >= "1.21.11") {
@@ -86,6 +88,7 @@ repositories {
 	maven("https://maven.neoforged.net/releases") // NeoForge
 	maven("https://maven.minecraftforge.net/") // TerraBlender
 	maven("https://maven.bawnorton.com/releases") // MixinSquared
+	maven("https://api.modrinth.com/maven") // Lithostitched
 }
 
 dependencies {
@@ -122,6 +125,12 @@ dependencies {
 			modImplementation(biolith)
 		else
 			modCompileOnly(biolith)
+	}
+
+	// Same jank for optional Lithostitched integration, except always compile-only:
+	// the artifact targets a newer Minecraft than the build, so it can't join dev runs
+	optionalProp("deps.lithostitched_version") {
+		modCompileOnly("maven.modrinth:lithostitched:$it")
 	}
 
 	when {

@@ -9,6 +9,8 @@ import net.werdei.biome_replacer.config.Config;
 //? if biolith
 import net.werdei.biome_replacer.replacer.BiolithReplacer;
 import net.werdei.biome_replacer.replacer.BlueprintReplacer;
+//? if lithostitched
+import net.werdei.biome_replacer.replacer.LithostitchedReplacer;
 import net.werdei.biome_replacer.replacer.VanillaReplacer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +38,8 @@ public class BiomeReplacer
         Config.reload();
         BlueprintReplacer.reset();
         VanillaReplacer.prepareRules(biomeRegistry, stemRegistry);
+        //? if lithostitched
+        LithostitchedReplacer.onWorldLoad();
         // Biolith runs first, so it can hand dimensions back if its registration fails
         //? if biolith
         BiolithReplacer.doReplacement(stemRegistry);

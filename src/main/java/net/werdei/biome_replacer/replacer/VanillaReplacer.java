@@ -26,6 +26,7 @@ public class VanillaReplacer
 {
     private static Map<Holder<Biome>, Holder<Biome>> replacementRules = Map.of();
     private static Map<String, Map<Holder<Biome>, Holder<Biome>>> mergedDimensionRules = Map.of();
+    private static final Map<String, MultiNoiseBiomeSourceExtension> knownSources = new HashMap<>();
 
     public static void doReplacement(Registry<LevelStem> stemRegistry)
     {
@@ -48,10 +49,22 @@ public class VanillaReplacer
             }
             //?}
 
-            if (!(level.generator() instanceof NoiseBasedChunkGenerator generator)
-                    || !(generator.getBiomeSource() instanceof MultiNoiseBiomeSource))
+            if (!(level.generator() instanceof NoiseBasedChunkGenerator generator))
             {
                 // We only manipulate noise parameters, every other generator gets skipped
+                BiomeReplacer.log("Skipping " + levelId);
+                continue;
+            }
+
+            // After server start the generator may hold Lithostitched's wrapper,
+            // so the vanilla source is remembered from the initial pass instead
+            MultiNoiseBiomeSourceExtension biomeSource;
+            if (generator.getBiomeSource() instanceof MultiNoiseBiomeSource)
+                knownSources.put(levelId.toString(), biomeSource = (MultiNoiseBiomeSourceExtension) generator.getBiomeSource());
+            else
+                biomeSource = knownSources.get(levelId.toString());
+            if (biomeSource == null)
+            {
                 BiomeReplacer.log("Skipping " + levelId);
                 continue;
             }
@@ -62,7 +75,22 @@ public class VanillaReplacer
                 continue;
             }
 
-            var biomeSource = (MultiNoiseBiomeSourceExtension) generator.getBiomeSource();
+            //? if lithostitched {
+            if (LithostitchedReplacer.claimsReplacements())
+            {
+                var removals = new HashMap<Holder<Biome>, Holder<Biome>>();
+                for (var rule : effectiveRules.entrySet())
+                    if (rule.getValue() == null)
+                        removals.put(rule.getKey(), null);
+                if (removals.isEmpty())
+                {
+                    BiomeReplacer.log("Replacements in " + levelId + " are applied through Lithostitched, leaving its noise parameters untouched");
+                    continue;
+                }
+                effectiveRules = removals;
+            }
+            //?}
+
             var parameters = biomeSource.biome_replacer$getParameters();
 
             List<Pair<Climate.ParameterPoint, Holder<Biome>>> newParameterList = new ArrayList<>();
@@ -98,6 +126,7 @@ public class VanillaReplacer
 
     public static void prepareRules(Registry<Biome> biomeRegistry, Registry<LevelStem> stemRegistry)
     {
+        knownSources.clear();
         var knownDimensions = stemRegistry.entrySet().stream()
                 .map(steam -> steam.getKey().identifier().toString())
                 .collect(Collectors.toSet());
@@ -210,6 +239,11 @@ public class VanillaReplacer
     static boolean hasDimensionRules(String dimensionId)
     {
         return mergedDimensionRules.containsKey(dimensionId);
+    }
+
+    static boolean hasAnyRules()
+    {
+        return !replacementRules.isEmpty() || !mergedDimensionRules.isEmpty();
     }
 
     public static Holder<Biome> replaceIfNeeded(Holder<Biome> original)

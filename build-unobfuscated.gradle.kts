@@ -43,6 +43,7 @@ stonecutter {
 	constants["forge-like"] = isNeoforge
 	constants["unobfuscated"] = true
 	constants["biolith"] = findProperty("deps.biolith_version") != null
+	constants["lithostitched"] = findProperty("deps.lithostitched_version") != null
 
 	replacements.string(current.parsed >= "1.21.11") {
 		replace("ResourceLocation", "Identifier")
@@ -56,6 +57,7 @@ repositories {
 	maven("https://maven.neoforged.net/releases")
 	maven("https://maven.minecraftforge.net/")
 	maven("https://maven.bawnorton.com/releases")
+	maven("https://api.modrinth.com/maven")
 }
 
 if (isFabric) {
@@ -118,6 +120,10 @@ dependencies {
 
 	optionalProp("deps.biolith_version") {
 		add(if (property("deps.biolith_enabled").toString().toBoolean()) "implementation" else "compileOnly", "com.terraformersmc:biolith-$loader:$it")
+	}
+
+	optionalProp("deps.lithostitched_version") {
+		add("compileOnly", "maven.modrinth:lithostitched:$it")
 	}
 }
 

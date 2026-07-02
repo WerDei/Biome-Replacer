@@ -11,6 +11,7 @@
     "biolith.DimensionBiomePlacementMixin",
     "blueprint.ModdedBiomeSlicesManagerMixin",
     "blueprint.ModdedBiomeSourceMixin",
+    "lithostitched.MinecraftServerMixin",
     "terrablender.ClimateParameterListMixin",
     "terrablender.LevelUtilsMixin"
   ],

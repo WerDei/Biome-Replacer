@@ -33,7 +33,7 @@
 \*Please note that Biome Replacer **cannot change terrain shape**. This means that it's impossible 
 to change oceans to land, create ocean-only worlds, etc.
 
-\*\*Biome Replacer integrates with the TerraBlender, Blueprint and Biolith biome libraries (Biolith on 1.20+). Biomes from other worldgen libraries can't be changed, but BR should not break, and will work fine alongside most world generation mods.
+\*\*Biome Replacer integrates with the TerraBlender, Blueprint, Biolith and Lithostitched biome libraries (Biolith on 1.20+, Lithostitched on 1.21.1+). Biomes from other worldgen libraries can't be changed, but BR should not break, and will work fine alongside most world generation mods.
 
 ## Setup
 
