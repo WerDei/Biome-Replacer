@@ -27,24 +27,27 @@ public class VanillaReplacer
     private static Map<Holder<Biome>, Holder<Biome>> replacementRules = Map.of();
     private static Map<String, Map<Holder<Biome>, Holder<Biome>>> mergedDimensionRules = Map.of();
 
-    public static void doReplacement(Registry<Biome> biomeRegistry, Registry<LevelStem> stemRegistry)
+    public static void doReplacement(Registry<LevelStem> stemRegistry)
     {
-        var knownDimensions = stemRegistry.entrySet().stream()
-                .map(steam -> steam.getKey().identifier().toString())
-                .collect(Collectors.toSet());
-        prepareRules(biomeRegistry, knownDimensions);
-        
         if (replacementRules.isEmpty() && mergedDimensionRules.isEmpty())
         {
             BiomeReplacer.log("No rules found, not replacing anything");
             return;
         }
-        
+
         for (var levelStem : stemRegistry.entrySet())
         {
             var levelId = levelStem.getKey().identifier();
             var level = levelStem.getValue();
-            
+
+            //? if biolith {
+            if (BiolithReplacer.claims(level.type()))
+            {
+                BiomeReplacer.log(levelId + " is managed through Biolith, leaving its noise parameters untouched");
+                continue;
+            }
+            //?}
+
             if (!(level.generator() instanceof NoiseBasedChunkGenerator generator)
                     || !(generator.getBiomeSource() instanceof MultiNoiseBiomeSource))
             {
@@ -52,7 +55,7 @@ public class VanillaReplacer
                 BiomeReplacer.log("Skipping " + levelId);
                 continue;
             }
-            var effectiveRules = mergedDimensionRules.getOrDefault(levelId.toString(), replacementRules);
+            var effectiveRules = effectiveRules(levelId.toString());
             if (effectiveRules.isEmpty())
             {
                 BiomeReplacer.log("No rules apply to " + levelId + ", leaving it untouched");
@@ -93,8 +96,12 @@ public class VanillaReplacer
         }
     }
 
-    private static void prepareRules(Registry<Biome> biomeRegistry, Set<String> knownDimensions)
+    public static void prepareRules(Registry<Biome> biomeRegistry, Registry<LevelStem> stemRegistry)
     {
+        var knownDimensions = stemRegistry.entrySet().stream()
+                .map(steam -> steam.getKey().identifier().toString())
+                .collect(Collectors.toSet());
+
         var globalRules = new HashMap<Holder<Biome>, Holder<Biome>>();
         var perDimensionRules = new HashMap<String, HashMap<Holder<Biome>, Holder<Biome>>>();
         var rulesDirect = 0;
@@ -195,6 +202,16 @@ public class VanillaReplacer
         /*return TagKey.create(Registry.BIOME_REGISTRY, resourceLocation);*/
     }
     
+    static Map<Holder<Biome>, Holder<Biome>> effectiveRules(String dimensionId)
+    {
+        return mergedDimensionRules.getOrDefault(dimensionId, replacementRules);
+    }
+
+    static boolean hasDimensionRules(String dimensionId)
+    {
+        return mergedDimensionRules.containsKey(dimensionId);
+    }
+
     public static Holder<Biome> replaceIfNeeded(Holder<Biome> original)
     {
         return replaceIfNeeded(original, null);

@@ -42,6 +42,7 @@ stonecutter {
 	constants["oldforge"] = false
 	constants["forge-like"] = isNeoforge
 	constants["unobfuscated"] = true
+	constants["biolith"] = findProperty("deps.biolith_version") != null
 
 	replacements.string(current.parsed >= "1.21.11") {
 		replace("ResourceLocation", "Identifier")
@@ -113,6 +114,10 @@ dependencies {
 	optionalProp("deps.terrablender") {
 		val terraBlender = "com.github.glitchfiend:TerraBlender-$loader:$mcVersion-$it"
 		add(if (property("deps.terrablender_enabled").toString().toBoolean()) "implementation" else "compileOnly", terraBlender)
+	}
+
+	optionalProp("deps.biolith_version") {
+		add(if (property("deps.biolith_enabled").toString().toBoolean()) "implementation" else "compileOnly", "com.terraformersmc:biolith-$loader:$it")
 	}
 }
 

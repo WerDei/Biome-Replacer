@@ -156,7 +156,9 @@ If you see **no** warnings and nothing works, the mod may not have loaded. Check
 
 **Chance / percentage rules:** Rules like `minecraft:plains > null 0.5` are not supported. Every rule is 100% or nothing.
 
-**Some modded biomes:** Biome Replacer works with TerraBlender and Blueprint mods. It does not support Biolith and some other biome libraries.
+**Some modded biomes:** Biome Replacer works with the TerraBlender, Blueprint and Biolith (on 1.20+) biome libraries. It does not support other biome libraries.
+
+**Removing some modded biomes:** a few biomes from Biolith-based mods, and all End biomes, can only be replaced, not removed. If a `> null` rule does nothing, replace the biome with another one instead. Biome Replacer tells you in chat when a rule is affected.
 
 **Cave biomes are separate rules:** Surface and cave biomes are different IDs. Replacing a surface biome will not affect cave biomes underneath. To change or remove a cave biome, add a rule for it directly (e.g. `minecraft:deep_dark > null`).
 

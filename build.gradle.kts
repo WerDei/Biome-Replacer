@@ -25,6 +25,7 @@ class Dependencies {
 	val mixinsquaredVersion = property("deps.mixinsquared")
 	val mixinExtrasVersion = property("deps.mixinextras")
 	val terrablenderEnabled = property("deps.terrablender_enabled").toString().toBoolean()
+	val biolithEnabled = property("deps.biolith_enabled").toString().toBoolean()
 }
 
 class LoaderData {
@@ -57,6 +58,8 @@ stonecutter {
 	constants["oldforge"] = loader.isOldforge
 	constants["forge-like"] = loader.isForgeLike
 	constants["unobfuscated"] = false
+	// Only versions with a published Biolith artifact get the integration
+	constants["biolith"] = findProperty("deps.biolith_version") != null
 
     // 1.21.11 "ResourceLocation" rename
     replacements.string(current.parsed >= "1.21.11") {
@@ -110,6 +113,15 @@ dependencies {
 			modImplementation(terraBlender)
 		else
 			modCompileOnly(terraBlender) // API still needs to be present for compilation, but mod won't be in the running game
+	}
+
+	// Same jank for optional Biolith integration
+	optionalProp("deps.biolith_version") {
+		val biolith = "com.terraformersmc:biolith-${loader.loader}:$it"
+		if (deps.biolithEnabled)
+			modImplementation(biolith)
+		else
+			modCompileOnly(biolith)
 	}
 
 	when {

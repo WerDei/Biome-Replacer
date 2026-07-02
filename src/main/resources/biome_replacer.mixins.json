@@ -8,6 +8,7 @@
     "MultiNoiseBiomeSourceMixin",
     "ServerPlayerMixin",
     "WorldStemMixin",
+    "biolith.DimensionBiomePlacementMixin",
     "blueprint.ModdedBiomeSlicesManagerMixin",
     "blueprint.ModdedBiomeSourceMixin",
     "terrablender.ClimateParameterListMixin",
