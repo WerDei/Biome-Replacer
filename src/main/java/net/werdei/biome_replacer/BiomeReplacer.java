@@ -6,7 +6,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.werdei.biome_replacer.config.Config;
+//? if bclib
+import net.werdei.biome_replacer.replacer.BCLibReplacer;
+//? if biolith
+import net.werdei.biome_replacer.replacer.BiolithReplacer;
 import net.werdei.biome_replacer.replacer.BlueprintReplacer;
+//? if lithostitched
+import net.werdei.biome_replacer.replacer.LithostitchedReplacer;
 import net.werdei.biome_replacer.replacer.VanillaReplacer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +39,15 @@ public class BiomeReplacer
     {
         Config.reload();
         BlueprintReplacer.reset();
-        VanillaReplacer.doReplacement(biomeRegistry, stemRegistry);
+        VanillaReplacer.prepareRules(biomeRegistry, stemRegistry);
+        //? if lithostitched
+        LithostitchedReplacer.onWorldLoad();
+        // Biolith runs first, so it can hand dimensions back if its registration fails
+        //? if biolith
+        BiolithReplacer.doReplacement(stemRegistry);
+        //? if bclib
+        BCLibReplacer.doReplacement(stemRegistry);
+        VanillaReplacer.doReplacement(stemRegistry);
     }
     
     public static void debug(String message)
@@ -57,6 +71,12 @@ public class BiomeReplacer
         unshownWarnings.add(new Warning(line, message));
         LOGGER.warn("{}Config issue on line {}: {}", LOG_PREFIX, line, message);
     }
+
+    public static void logGeneralWarning(String message)
+    {
+        unshownWarnings.add(new Warning(-1, message));
+        LOGGER.warn(LOG_PREFIX + "{}", message);
+    }
     
     public static void showWarnings(ServerPlayer player)
     {
@@ -67,8 +87,9 @@ public class BiomeReplacer
             player.sendSystemMessage(Component.literal("§6[BiomeReplacer] There are issues in the configuration file:"));
             for (var warning : unshownWarnings)
             {
-                player.sendSystemMessage(Component.literal(String.format(
-                        "§6Line %s:§r %s", warning.line, warning.message)));
+                player.sendSystemMessage(Component.literal(warning.line < 0
+                        ? String.format("§6%s", warning.message)
+                        : String.format("§6Line %s:§r %s", warning.line, warning.message)));
             }
         }
         catch (NoSuchMethodError e)

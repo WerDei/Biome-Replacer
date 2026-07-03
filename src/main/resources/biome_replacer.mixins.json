@@ -8,8 +8,13 @@
     "MultiNoiseBiomeSourceMixin",
     "ServerPlayerMixin",
     "WorldStemMixin",
+    "bclib.BCLBiomeSourceMixin",
+    "bclib.BCLibBiomeSourceMixin",
+    "bclib.BiomeSourceMixin",
+    "biolith.DimensionBiomePlacementMixin",
     "blueprint.ModdedBiomeSlicesManagerMixin",
     "blueprint.ModdedBiomeSourceMixin",
+    "lithostitched.MinecraftServerMixin",
     "terrablender.ClimateParameterListMixin",
     "terrablender.LevelUtilsMixin"
   ],

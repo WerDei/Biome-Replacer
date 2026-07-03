@@ -42,6 +42,10 @@ stonecutter {
 	constants["oldforge"] = false
 	constants["forge-like"] = isNeoforge
 	constants["unobfuscated"] = true
+	constants["biolith"] = findProperty("deps.biolith_version") != null
+	constants["lithostitched"] = findProperty("deps.lithostitched_version") != null
+	// BCLib doesn't exist past Minecraft 1.21.1
+	constants["bclib"] = false
 
 	replacements.string(current.parsed >= "1.21.11") {
 		replace("ResourceLocation", "Identifier")
@@ -55,6 +59,7 @@ repositories {
 	maven("https://maven.neoforged.net/releases")
 	maven("https://maven.minecraftforge.net/")
 	maven("https://maven.bawnorton.com/releases")
+	maven("https://api.modrinth.com/maven")
 }
 
 if (isFabric) {
@@ -113,6 +118,14 @@ dependencies {
 	optionalProp("deps.terrablender") {
 		val terraBlender = "com.github.glitchfiend:TerraBlender-$loader:$mcVersion-$it"
 		add(if (property("deps.terrablender_enabled").toString().toBoolean()) "implementation" else "compileOnly", terraBlender)
+	}
+
+	optionalProp("deps.biolith_version") {
+		add(if (property("deps.biolith_enabled").toString().toBoolean()) "implementation" else "compileOnly", "com.terraformersmc:biolith-$loader:$it")
+	}
+
+	optionalProp("deps.lithostitched_version") {
+		add("compileOnly", "maven.modrinth:lithostitched:$it")
 	}
 }
 

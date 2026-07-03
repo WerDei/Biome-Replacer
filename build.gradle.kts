@@ -25,6 +25,7 @@ class Dependencies {
 	val mixinsquaredVersion = property("deps.mixinsquared")
 	val mixinExtrasVersion = property("deps.mixinextras")
 	val terrablenderEnabled = property("deps.terrablender_enabled").toString().toBoolean()
+	val biolithEnabled = property("deps.biolith_enabled").toString().toBoolean()
 }
 
 class LoaderData {
@@ -57,6 +58,12 @@ stonecutter {
 	constants["oldforge"] = loader.isOldforge
 	constants["forge-like"] = loader.isForgeLike
 	constants["unobfuscated"] = false
+	// Only versions with a published Biolith artifact get the integration
+	constants["biolith"] = findProperty("deps.biolith_version") != null
+	// Only versions where Lithostitched has biome injectors (1.6+) get the integration
+	constants["lithostitched"] = findProperty("deps.lithostitched_version") != null
+	// BCLib only exists on Fabric up to 1.21.1, and is hooked by class name, so no dependency here
+	constants["bclib"] = loader.isFabric && current.parsed < "1.21.2"
 
     // 1.21.11 "ResourceLocation" rename
     replacements.string(current.parsed >= "1.21.11") {
@@ -83,6 +90,7 @@ repositories {
 	maven("https://maven.neoforged.net/releases") // NeoForge
 	maven("https://maven.minecraftforge.net/") // TerraBlender
 	maven("https://maven.bawnorton.com/releases") // MixinSquared
+	maven("https://api.modrinth.com/maven") // Lithostitched
 }
 
 dependencies {
@@ -110,6 +118,21 @@ dependencies {
 			modImplementation(terraBlender)
 		else
 			modCompileOnly(terraBlender) // API still needs to be present for compilation, but mod won't be in the running game
+	}
+
+	// Same jank for optional Biolith integration
+	optionalProp("deps.biolith_version") {
+		val biolith = "com.terraformersmc:biolith-${loader.loader}:$it"
+		if (deps.biolithEnabled)
+			modImplementation(biolith)
+		else
+			modCompileOnly(biolith)
+	}
+
+	// Same jank for optional Lithostitched integration, except always compile-only:
+	// the artifact targets a newer Minecraft than the build, so it can't join dev runs
+	optionalProp("deps.lithostitched_version") {
+		modCompileOnly("maven.modrinth:lithostitched:$it")
 	}
 
 	when {

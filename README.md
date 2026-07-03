@@ -25,7 +25,7 @@
 
 - **Easy configuration:** Simple properties file with intuitive syntax
 - **Designed for datapacks** Configure Terralith or other worldgen packs with ease\*
-- **(Limited) mod integration:** Remove biomes from a mod that has no configuration of its own\*\*
+- **(Limited) Mod integration:** Change or remove biomes from a mod that has no configuration of its own\*\*
 - **Server-side:** No client installation needed (unless you want to use it in singleplayer, of course!)
 - **High availability:** From 1.18.2 up to the most current Minecraft version, all equally supported
 - **Negligible performance impact:** Runs only once on world start, does not slow down the generation
@@ -33,8 +33,7 @@
 \*Please note that Biome Replacer **cannot change terrain shape**. This means that it's impossible 
 to change oceans to land, create ocean-only worlds, etc.
 
-\*\*The only currently supported biome libraries are TerraBlender & Blueprint, so you won't be able to change Biolith biomes, 
-for example. Still, BR should not break, and will work fine alongside most world generation mods.
+\*\*Biome Replacer integrates with the TerraBlender, Blueprint, BCLib, Biolith and Lithostitched biome libraries (Biolith on 1.20+, Lithostitched on 1.21.1+). Biomes from other worldgen libraries can't be changed, but BR should not break, and will work fine alongside most world generation mods.
 
 ## Setup
 
@@ -46,7 +45,7 @@ If you made any mistakes, you will see warnings in chat. Check for typos in your
 If you still have issues, check out our [troubleshooting guide](https://github.com/WerDei/Biome-Replacer/blob/master/docs/TROUBLESHOOTING.md)
 for solutions to common mistakes.
 
-Tip: on client, you don't deed to restart the game every time you change your rules, you can simply leave and enter the world again.
+Tip: on client, you don't need to restart the game every time you change your rules, you can simply leave and enter the world again.
 
 ## Examples
 
