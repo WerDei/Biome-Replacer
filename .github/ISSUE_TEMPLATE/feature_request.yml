@@ -1,0 +1,47 @@
+name: Feature request
+description: Suggest a feature for Biome Replacer
+title: "[Feature Request] "
+labels: ["enhancement"]
+body:
+  - type: checkboxes
+    attributes:
+      label: Duplicate check
+      description: Reports that are duplicates will be closed without response.
+      options:
+        - label: I have searched existing feature requests and confirm this is not a duplicate.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear and concise description of the problem, if any.
+      placeholder: "e.g. I have no way to..."
+
+  - type: textarea
+    id: feature
+    attributes:
+      label: Describe the feature you'd like
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: Any alternative solutions or workarounds you've already tried or thought about.
+
+  - type: textarea
+    id: usecase
+    attributes:
+      label: Why would this be useful?
+      description: Explain why this feature would be beneficial.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any mockups, examples from other mods, or other context here.
